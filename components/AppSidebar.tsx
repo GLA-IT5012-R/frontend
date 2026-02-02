@@ -1,3 +1,6 @@
+"use client"
+
+
 import { Calendar, Home, Inbox, Search, Settings, ChevronDown, ChevronUp, User2 } from "lucide-react"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
 import {
@@ -21,6 +24,9 @@ import {
   SidebarMenuSubButton,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+
+import { useAuth } from '@/contexts/auth-context';
+import { use } from "react"
 
 // Menu items with sub-items
 const items = [
@@ -58,7 +64,12 @@ const items = [
   },
 ]
 
+
+
 export function AppSidebar() {
+
+  const { logout } = useAuth();
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -132,7 +143,7 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>Billing</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
