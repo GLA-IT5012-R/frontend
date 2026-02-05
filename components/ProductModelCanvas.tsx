@@ -26,8 +26,8 @@ export function ProductModelCanvas({
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas style={{ width: '100%', height: '100%' }}
                 camera={{ position: [0, 0, 6], fov: 45 }}>
-                <ambientLight intensity={2.5} />
-                <directionalLight position={[0, 6, 5]} intensity={5} />
+                <ambientLight intensity={1.5} />
+                <directionalLight position={[0, 5, 6]} intensity={5} color={'#ccc'}/>
                 <Suspense fallback={null}>
                     <ProductModel
                         textureUrls={textureUrls}
@@ -95,7 +95,7 @@ export function ProductModel({ textureUrls, variant }: ProductModelInnerProps) {
 
                 // 对应顺序替换贴
                 if (!meshNode) return null
-                const map = textures[idx] || null
+                const map = textures[0] || null
                 return (
                     <mesh
                         key={meshNode.name}

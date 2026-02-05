@@ -4,8 +4,9 @@ import { Heading } from "@/components/Heading";
 import { SnowboardProduct } from "./SnowboardProduct";
 import { SlideIn } from "@/components/SlideIn";
 import { ProductGridSlice } from "@/data/homepage";
-import { JSX, useEffect } from "react";
+import { JSX, useEffect, useState } from "react";
 import { mockModelData } from "./mock";
+import { getProducts } from "@/api/auth";
 
 /**
  * Props for `ProductGrid`.
@@ -18,10 +19,21 @@ export type ProductGridProps = {
  * Component for "ProductGrid" Slices.
  */
 const ProductGrid = ({ slice }: ProductGridProps): JSX.Element => {
-
+  const [hotList, sethotList] = useState([])
   useEffect(() => {
-    console.log('mockModelData', mockModelData.length)
+    // console.log('mockModelData', mockModelData.length)
+    getProducts().then(res => {
+      console.log('Products from API:', res.data);
+      if (res.code == 200 && res.data.length > 0) {
+        sethotList(res.data || []);
+      }
+    }).catch(err => {
+      console.error('Failed to fetch products:', err);
+    });
   }, []);
+
+
+
   return (
     <Bounded
       id="products"
@@ -41,18 +53,11 @@ const ProductGrid = ({ slice }: ProductGridProps): JSX.Element => {
         </div>
       </SlideIn>
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {mockModelData.map((data,idx) => (
+        {hotList.map((product, idx) => (
           <SnowboardProduct
+            key={`product-${product.id}`}
             idx={idx}
-            key={data.id}
-            id={data.id}
-            type={data.type}
-            typeId={data.type_id}
-            name={data.name}
-            selectedVariant={data.variant}
-            textureUrls={data.textures}
-            price={data.price}
-            reviews={data.reviews}
+            data={product}
           />
         ))}
       </div>

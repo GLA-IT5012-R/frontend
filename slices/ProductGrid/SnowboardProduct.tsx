@@ -24,7 +24,7 @@ const SCRIBBLE_COLORS = [
   '#d6d3d1', // gray
 ]
 
-export function SnowboardProduct({ ...data }: any): React.ReactElement | null {
+export function SnowboardProduct({ idx, data }: any): React.ReactElement | null {
 
   useEffect(() => {
     console.log('SnowboardProduct Rendered: ', data);
@@ -37,7 +37,7 @@ export function SnowboardProduct({ ...data }: any): React.ReactElement | null {
   // }
 
   // const price = `$${(product.price / 100).toFixed(2)}`;
-  const scribbleColor = SCRIBBLE_COLORS[data.idx % SCRIBBLE_COLORS.length]
+  const scribbleColor = SCRIBBLE_COLORS[idx % SCRIBBLE_COLORS.length]
 
 
   return (
@@ -66,9 +66,10 @@ export function SnowboardProduct({ ...data }: any): React.ReactElement | null {
           height={150}
           className=" mx-auto w-[58%] origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"
         /> */}
-        
+
         <ProductModelCanvas
-          {...data}
+          {...data.asset}
+          textureUrls={data.asset.texture_urls[`${data.asset.type_id}`]}
           // style={{ width: '100%', height: '300px' }}
           // className="w-full h-[350px]"
           orbitControls={false}
@@ -78,7 +79,7 @@ export function SnowboardProduct({ ...data }: any): React.ReactElement | null {
       </div>
       <HorizontalLine className={HORIZONTAL_LINE_CLASSES} />
 
-       <h3 className="my-2 text-center font-sans leading-tight ~text-lg/xl">
+      <h3 className="my-2 text-center font-sans leading-tight ~text-lg/xl">
         {data.name}
       </h3>
 

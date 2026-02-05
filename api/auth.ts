@@ -13,3 +13,6 @@ export const getTestAuth = () => http.get('/testAuth/');
 // 同步用户信息到后端
 export const syncUserApi = (data: { id: string; email: string; name: string }) =>
   http.post('/sync-user/', data);
+
+// 获取产品列表
+export const getProducts = () => http.get('/products-show/');

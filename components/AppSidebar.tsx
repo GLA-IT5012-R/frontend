@@ -26,32 +26,28 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useAuth } from '@/contexts/auth-context';
-import { use } from "react"
-
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 // Menu items with sub-items
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/dashboard",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: "Products Management",
+    url: "/admin-products",
     icon: Inbox,
     sub: [
-      { title: "All Messages", url: "#" },
-      { title: "Unread", url: "#" },
+      { title: "Assets", url: "/admin-products/product-assets" },
+      { title: "Products", url: "/admin-products/product-lists" },
     ]
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: "Orders Management",
+    url: "/admin-orders",
     icon: Calendar,
-    sub: [
-      { title: "My Calendar", url: "#" },
-      { title: "Shared", url: "#" },
-    ]
   },
   {
     title: "Settings",
@@ -67,23 +63,31 @@ const items = [
 
 
 export function AppSidebar() {
-
+  const pathname = usePathname()
   const { logout } = useAuth();
-
+  const isActive = (url: string) => {
+    if (!url || url === "#") return false
+    return pathname.startsWith(url)
+  }
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>SNOWCRAFT</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <div key={item.title}>
                   {item.sub ? (
-                    <Collapsible defaultOpen className="group/collapsible">
+                    <Collapsible
+                      defaultOpen={item.sub.some(sub => isActive(sub.url))} // 子菜单高亮则展开
+                      className="group/collapsible"
+                    >
                       <SidebarMenuItem>
                         <SidebarMenuButton asChild>
-                          <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <CollapsibleTrigger
+                            className={`flex items-center justify-between w-full px-2 py-2 rounded }`}
+                          >
                             <div className="flex items-center gap-2">
                               <item.icon />
                               <span>{item.title}</span>
@@ -92,14 +96,18 @@ export function AppSidebar() {
                           </CollapsibleTrigger>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
+
                       <CollapsibleContent>
                         <SidebarMenuSub>
                           {item.sub.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton asChild>
-                                <a href={subItem.url}>
+                                <Link
+                                  href={subItem.url}
+                                  className={`block w-full px-2 py-1 rounded} ${isActive(subItem.url) ? 'bg-blue-100 text-blue-600' : ''}`}
+                                >
                                   <span>{subItem.title}</span>
-                                </a>
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           ))}
@@ -109,10 +117,13 @@ export function AppSidebar() {
                   ) : (
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild>
-                        <a href={item.url}>
+                        <Link
+                          href={item.url}
+                          className={`flex items-center gap-2 px-2 py-2 rounded ${isActive(item.url) ? 'bg-blue-100' : ''}`}
+                        >
                           <item.icon />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )}
@@ -129,7 +140,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-12 flex items-center ">
-                  <User2 /> Username
+                  <User2 /> Admin
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -137,14 +148,8 @@ export function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Billing</span>
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout}>
-                  <span>Sign out</span>
+                  <span className="cursor-pointer text-red-400">Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
