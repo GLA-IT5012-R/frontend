@@ -56,7 +56,7 @@ export function Header() {
     });
 
     return (
-        <header id="header" className="w-full z-9 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
+        <header id="header" className="w-full z-9999 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
                 <Logo className="text-brand-purple fl-h-10/20" />
