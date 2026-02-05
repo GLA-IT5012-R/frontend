@@ -83,14 +83,15 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
         {data.name}
       </h3>
 
-      {/* <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
         <Link
-          href={data.customizer_link.url}
-          className="button-cutout inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom px-4 text-base ~py-2/2.5 from-brand-orange to-brand-lime text-black"
+          // href={data.customizer_link.url}
+          href={'#'}
+          className="button-cutout inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom px-4 text-base fl-py-2/2.5 from-brand-blue to-brand-lime text-black"
         >
-          {data.customizer_link.text}
+          {/* {data.customizer_link.text} */} Customize
         </Link>
-      </div> */}
+      </div>
     </div>
   );
 }

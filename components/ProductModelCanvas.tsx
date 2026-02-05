@@ -26,7 +26,7 @@ export function ProductModelCanvas({
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas style={{ width: '100%', height: '100%' }}
                 camera={{ position: [0, 0, 6], fov: 45 }}>
-                <ambientLight intensity={1.5} />
+                <ambientLight intensity={2.5} />
                 <directionalLight position={[0, 5, 6]} intensity={5} color={'#ccc'}/>
                 <Suspense fallback={null}>
                     <ProductModel
