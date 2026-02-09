@@ -1,7 +1,7 @@
 import React from 'react'
 import { CustomizerCanvas } from './CustomizerlCanvas'
 
-export function Customizer({ data }: any): React.ReactElement {
+export function CustomizerSelection({ data }: any): React.ReactElement {
     console.log(data)
     return (
         <div className="flex flex-col lg:flex-row w-full min-h-[600px] border border-gray-200 rounded-lg overflow-hidden">

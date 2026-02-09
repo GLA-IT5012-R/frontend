@@ -5,9 +5,7 @@ import { HorizontalLine, VerticalLine } from "@/components/Line";
 import clsx from "clsx";
 import { Scribble } from "./Scribble";
 import Link from "next/link";
-import Image from "next/image";
 import { ProductModelCanvas } from "@/components/ProductModelCanvas";
-import type { ProductModelProps } from '@/models/Product'
 import {
   Drawer,
   DrawerClose,
@@ -19,7 +17,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button";
-import { Customizer } from "@/components/Customizer";
+import { CustomizerSelection } from "@/components/CustomizerSelection";
 
 
 const VERTICAL_LINE_CLASSES =
@@ -111,7 +109,7 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
             </DrawerHeader>
             <div className="w-full no-scrollbar overflow-y-auto px-4">
               {/* Customizer content goes here */}
-              <Customizer
+              <CustomizerSelection
                 data={data}
               />
             </div>

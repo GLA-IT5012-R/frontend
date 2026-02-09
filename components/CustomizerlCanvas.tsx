@@ -38,7 +38,9 @@ export function CustomizerCanvas({
     // console.log(texture_urls, type_id)
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
-            <Canvas style={{ width: '100%', height: '100%' }}
+            <Canvas
+                style={{ width: '100%', height: '100%' }}
+                shadows
                 camera={{ position: position, fov: 55 }}>
                 <Suspense fallback={null}>
                     {/* <Environment preset="city" /> */}
@@ -49,8 +51,8 @@ export function CustomizerCanvas({
                     <directionalLight
                         castShadow
                         lookAt={[0, 0, 0]}
-                        position={[1, 1, 1]}
-                        intensity={1.6}
+                        position={[2, 2, 2]}
+                        intensity={1.5}
                     />
                     <fog attach="fog" args={[ENVIRONMENT_COLOR, 3, 30]} />
                     <color attach="background" args={[ENVIRONMENT_COLOR]} />
@@ -139,6 +141,8 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
                 const map = textures[0] || null
                 return (
                     <mesh
+                        castShadow
+                        receiveShadow
                         key={meshNode.name}
                         geometry={meshNode.geometry}
                         material={material}
