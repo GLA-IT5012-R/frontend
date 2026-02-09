@@ -56,7 +56,7 @@ export function Header() {
     });
 
     return (
-        <header id="header" className="w-full z-9999 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
+        <header id="header" className="w-full z-9 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
                 <Logo className="text-brand-purple fl-h-10/20" />
@@ -133,7 +133,7 @@ export function Header() {
                     {/* <CartButton /> */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="relative z-50 w-8 h-8 flex flex-col items-center justify-center gap-1.5 group"
+                        className="relative w-8 h-8 flex flex-col items-center justify-center gap-1.5 group"
                         aria-label="Toggle menu"
                     >
                         <span className={`block h-1 w-7 bg-brand-purple transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`}></span>

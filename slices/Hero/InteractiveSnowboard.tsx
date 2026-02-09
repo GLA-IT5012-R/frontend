@@ -27,7 +27,7 @@ export function InteractiveSnowboard({
 }: any) {
 
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center justify-center">
       <Canvas
         className="min-h-[60rem] w-full bg"
         camera={{ position: INITIAL_CAMERA_POSITION, fov: 55, near: 0.01, far: 10000 }}

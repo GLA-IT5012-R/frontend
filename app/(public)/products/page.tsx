@@ -2,9 +2,19 @@
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
 import { CustomizerDrawer } from "./CustomizerDrawer";
-import { JSX, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getProducts } from "@/api/auth";
 import ProductFilters from "@/components/ProductFilters";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const Products = () => {
   const [dataList, setDataList] = useState<any[]>([]);
@@ -15,22 +25,24 @@ const Products = () => {
     max_price: null as number | null,
   });
 
-  const page = 1;
-  const page_size = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(8);
+  const [totalPages, setTotalPages] = useState(1);
 
   // ---------- 拉取产品数据 ----------
-  const fetchProducts = (filtersParam = filters) => {
-    // 只传有值的参数，后端默认处理空值
+  const fetchProducts = (page = 1, filtersParam = filters) => {
     const params: Record<string, any> = {};
     if (filtersParam.keyword) params.keyword = filtersParam.keyword;
     if (filtersParam.type) params.type = filtersParam.type;
     if (filtersParam.min_price !== null) params.min_price = filtersParam.min_price;
     if (filtersParam.max_price !== null) params.max_price = filtersParam.max_price;
 
-    getProducts({ page, page_size, params })
+    getProducts({ page, page_size: pageSize, params })
       .then((res) => {
         if (res.code === 200) {
           setDataList(res.data.list || []);
+          setCurrentPage(res.data.page || 1);
+          setTotalPages(Math.ceil((res.data.total || 0) / pageSize));
         }
       })
       .catch((err) => {
@@ -46,19 +58,68 @@ const Products = () => {
   // ---------- 筛选回调 ----------
   const handleApplyFilters = (appliedFilters: typeof filters) => {
     setFilters((prev) => ({ ...prev, ...appliedFilters }));
-    fetchProducts({ ...filters, ...appliedFilters });
+    fetchProducts(1, { ...filters, ...appliedFilters }); // 筛选后回到第一页
+  };
+
+  // ---------- 页码切换 ----------
+  const handlePageChange = (page: number) => {
+    fetchProducts(page, filters);
+  };
+
+  // ---------- 渲染分页组件 ----------
+  const renderPagination = () => {
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    return (
+      <Pagination className="mt-6 flex justify-center">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (currentPage > 1) handlePageChange(currentPage - 1);
+              }}
+            />
+          </PaginationItem>
+
+          {pages.map((p) => (
+            <PaginationItem key={p}>
+              <PaginationLink
+                href="#"
+                isActive={p === currentPage}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(p);
+                }}
+              >
+                {p}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) handlePageChange(currentPage + 1);
+              }}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
   };
 
   return (
     <Bounded className="bg-texture bg-brand-gray">
       <div className="mt-20">
-        <Heading className="text-center ~mb-4/6" as="h2">
+        {/* <Heading className="text-center ~mb-4/6" as="h2">
           All Products
-        </Heading>
+        </Heading> */}
 
-        <ProductFilters
-          onApply={handleApplyFilters}
-        />
+        <ProductFilters onApply={handleApplyFilters} />
       </div>
 
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
@@ -66,6 +127,9 @@ const Products = () => {
           <CustomizerDrawer key={`product-${product.id}`} idx={idx} data={product} />
         ))}
       </div>
+
+      {/* 分页 */}
+      {totalPages > 1 && renderPagination()}
     </Bounded>
   );
 };

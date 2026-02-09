@@ -18,7 +18,7 @@ type FilterProps = {
 
 export default function ProductFilters({
     onApply,
-    types = ["雪板", "套装", "护具", "配件"],
+    types = ["Flat", "Camber", "Rocker"],
 }: FilterProps) {
     const [keyword, setKeyword] = useState("");
     const [minPrice, setMinPrice] = useState("");
@@ -48,55 +48,68 @@ export default function ProductFilters({
     };
 
     return (
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4">
 
-            {/* 搜索框 */}
-            <Input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Search products..."
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") handleApply();
-                }}
-                className="w-full md:w-64"
-            />
-
-            {/* 类型筛选 */}
-            <Select
-                value={selectedType}
-                onValueChange={(value) => setSelectedType(value)}
-            >
-                <SelectTrigger className="w-full md:w-48">
-                    <SelectValue placeholder="All Types" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    {types.map((t) => (
-                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-
-            {/* 价格过滤 */}
-            <div className="flex gap-2 items-center">
+            {/* 左侧：搜索 + 筛选 */}
+            <div className="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+                {/* 搜索框 */}
                 <Input
-                    type="number"
-                    value={minPrice}
-                    placeholder="Min Price"
-                    onChange={(e) => setMinPrice(e.target.value)}
-                    className="w-24"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="Search products..."
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") handleApply();
+                    }}
+                    className="w-full md:w-64"
                 />
-                <span className="text-white">-</span>
-                <Input
-                    type="number"
-                    value={maxPrice}
-                    placeholder="Max Price"
-                    onChange={(e) => setMaxPrice(e.target.value)}
-                    className="w-24"
-                />
+
+                {/* 类型筛选 */}
+                <Select
+                    value={selectedType}
+                    onValueChange={(value) => setSelectedType(value)}
+                >
+                    <SelectTrigger className="w-full md:w-48">
+                        <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        {types.map((t) => (
+                            <SelectItem key={t} value={t}>
+                                {t}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                {/* 价格过滤 */}
+                <div className="flex gap-2 items-center">
+                    <Input
+                        type="number"
+                        value={minPrice}
+                        placeholder="Min"
+                        min={0}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="w-24"
+                    />
+                    <span className="text-white">-</span>
+                    <Input
+                        type="number"
+                        value={maxPrice}
+                        placeholder="Max"
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="w-24"
+                    />
+                </div>
+            </div>
+
+            {/* 右侧：按钮 */}
+            <div className="flex gap-2 shrink-0">
                 <Button onClick={handleApply}>Apply</Button>
-                <Button variant="outline" onClick={handleReset}>Reset</Button>
+                <Button variant="outline" onClick={handleReset}>
+                    Reset
+                </Button>
             </div>
         </div>
+
     );
 }

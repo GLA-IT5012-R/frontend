@@ -88,7 +88,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
             href={slice.button.url}
             // href={slice.button.url}
             onClick={handleBuild}
-            className="button-cutout group z-20 mt-2 inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-4 px-2 fl-text-lg/2xl fl-py-0.5/4 from-brand-blue to-brand-lime text-black md:mr-4"
+            className="button-cutout group z-5 mt-2 inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-4 px-2 fl-text-lg/2xl fl-py-0.5/4 from-brand-blue to-brand-lime text-black md:mr-4"
           >
             <div className="flex fl-size-10/12 items-center justify-center transition-transform group-hover:-rotate-[25deg]">
               <SkateboardIcon className="h-full w-full" />

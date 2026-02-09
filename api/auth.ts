@@ -1,18 +1,19 @@
 import http from '@/utils/axios';
+import {api} from './api';
 
 // 登录
 export const loginApi = (data: { username: string; password: string }) =>
-  http.post('/login/', data)
+  http.post(api.login, data)
 
 // 刷新 token
 export const refreshTokenApi = (data: { refresh: string }) =>
-  http.post('/token/refresh/', data)
+  http.post(api.refreshToken, data)
 // 测试需要认证的接口
-export const getTestAuth = () => http.get('/testAuth/');
+export const getTestAuth = () => http.get(api.testAuth);
 
 // 同步用户信息到后端
 export const syncUserApi = (data: { id: string; email: string; name: string }) =>
-  http.post('/sync-user/', data);
+  http.post(api.syncUser, data);
 
 // 获取产品列表（支持分页）
 export const getProducts = (options?: {
@@ -37,7 +38,7 @@ export const getProducts = (options?: {
     });
   }
 
-  return http.post("/products-show/", {
+  return http.post(api.getProducts, {
     page: page_size && !page ? 1 : page,
     page_size,
     params: filteredParams,

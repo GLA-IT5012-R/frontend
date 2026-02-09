@@ -7,7 +7,7 @@ interface ProductModelInnerProps {
 
 import React, { Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/drei'
+import { useGLTF, OrbitControls, Environment, useTexture, SoftShadows } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
 
@@ -39,38 +39,39 @@ export function CustomizerCanvas({
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas
-                style={{ width: '100%', height: '100%' }}
                 shadows
-                camera={{ position: position, fov: 55 }}>
+                camera={{ position: position, fov: 55 }}
+                style={{ width: '100%', height: '100%' }}>
                 <Suspense fallback={null}>
                     {/* <Environment preset="city" /> */}
                     <Environment
                         files={"/hdr/warehouse-512.hdr"}
                         environmentIntensity={0.6}
                     />
+
                     <directionalLight
                         castShadow
-                        lookAt={[0, 0, 0]}
-                        position={[2, 2, 2]}
+                        position={[2, 5, 2]}
                         intensity={1.5}
+                        shadow-mapSize-width={2048}
+                        shadow-mapSize-height={2048}
                     />
                     <fog attach="fog" args={[ENVIRONMENT_COLOR, 3, 30]} />
                     <color attach="background" args={[ENVIRONMENT_COLOR]} />
                     {/* FLOOR */}
                     <StageFloor />
-
-
+                    {/* MODEL */}
                     <ProductModel
                         textureUrls={texture_urls[`${type_id}`] || []}
                         typeId={type_id}
-
                     />
                 </Suspense>
-
+                {/* CONTROL */}
                 <OrbitControls enabled={orbitControls}
                     minPolarAngle={0}
                     maxPolarAngle={Math.PI / 2.2}
                 />
+
             </Canvas>
         </div>
     )
@@ -79,11 +80,9 @@ export function CustomizerCanvas({
 
 export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
     const { nodes, materials } = useGLTF('/models/snowboard.glb')
-
-    // 根据 textureUrls 动态生成 texture
+    // Texture Configuration
     const textures = useTexture(textureUrls || [])
 
-    // 可选：统一贴图参数
     textures.forEach((tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
         tex.flipY = false
@@ -129,7 +128,7 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
 
     // 返回 mesh 列表
     return (
-        <group position={[0, 0.42, 0]} rotation={[Math.PI / 3, 0, 0]}>
+        <group position={[0, 0.465, 0]} rotation={[Math.PI / 3, 0, 0]}>
             {/* <mesh rotateX={Math.PI / 2}>
                 <planeGeometry args={[1, 1, 1]} />
                 <meshStandardMaterial map={textures[0]} />
@@ -171,7 +170,6 @@ function StageFloor() {
 
     return (
         <mesh
-            castShadow
             receiveShadow
             position={[0, -0.005, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
