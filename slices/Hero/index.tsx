@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
-import { SkateboardIcon } from "@/components/SbowboardIcon";
+import { SkateboardIcon } from "@/components/SnowboardIcon";
 import { InteractiveSnowboard } from "./InteractiveSnowboard";
 import { WideLogo } from "./WideLogo";
 import { TallLogo } from "./TallLogo";
@@ -100,7 +100,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
       </div>
       {/* 3d-模型 */}
       
-      <InteractiveSnowboard
+      <InteractiveSnowboard 
         // deckTextureURL={deckTextureURL}
         // wheelTextureURL={wheelTextureURL}
         // truckColor={truckColor}

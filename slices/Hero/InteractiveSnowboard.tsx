@@ -32,7 +32,7 @@ export function InteractiveSnowboard({
         className="min-h-[60rem] w-full bg"
         camera={{ position: INITIAL_CAMERA_POSITION, fov: 55, near: 0.01, far: 10000 }}
       >
-        <Suspense>
+        <Suspense fallback={null}>
           <Scene
           // deckTextureURL={deckTextureURL}
           // wheelTextureURL={wheelTextureURL}

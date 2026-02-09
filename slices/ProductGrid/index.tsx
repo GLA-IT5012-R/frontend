@@ -1,11 +1,10 @@
 'use client';
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
-import { SnowboardProduct } from "./SnowboardProduct";
+import { SnowboardProduct } from "./ProductItem";
 import { SlideIn } from "@/components/SlideIn";
 import { ProductGridSlice } from "@/data/homepage";
 import { JSX, useEffect, useState } from "react";
-import { mockModelData } from "./mock";
 import { getProducts } from "@/api/auth";
 
 /**
@@ -19,17 +18,19 @@ export type ProductGridProps = {
  * Component for "ProductGrid" Slices.
  */
 const ProductGrid = ({ slice }: ProductGridProps): JSX.Element => {
-  const [hotList, sethotList] = useState([])
+  const [hotList, setHotList] = useState([])
   useEffect(() => {
     // console.log('mockModelData', mockModelData.length)
-    getProducts().then(res => {
-      console.log('Products from API:', res.data);
-      if (res.code == 200 && res.data.length > 0) {
-        sethotList(res.data || []);
-      }
-    }).catch(err => {
-      console.error('Failed to fetch products:', err);
-    });
+    getProducts({ page_size: 4 })
+      .then((res) => {
+        if (res.code === 200) {
+          setHotList(res.data.list || []);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch products:", err);
+      });
+
   }, []);
 
 

@@ -14,5 +14,33 @@ export const getTestAuth = () => http.get('/testAuth/');
 export const syncUserApi = (data: { id: string; email: string; name: string }) =>
   http.post('/sync-user/', data);
 
-// 获取产品列表
-export const getProducts = () => http.get('/products-show/');
+// 获取产品列表（支持分页）
+export const getProducts = (options?: {
+  page?: number;
+  page_size?: number;
+  params?: {
+    keyword?: string;
+    type?: string;
+    min_price?: number | null | "";
+    max_price?: number | null | "";
+  };
+}) => {
+  const { page, page_size, params } = options || {};
+
+  // 只保留有效筛选字段
+  const filteredParams: Record<string, any> = {};
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== "" && value !== null && value !== undefined) {
+        filteredParams[key] = value;
+      }
+    });
+  }
+
+  return http.post("/products-show/", {
+    page: page_size && !page ? 1 : page,
+    page_size,
+    params: filteredParams,
+  });
+};
+

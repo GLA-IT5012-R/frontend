@@ -13,7 +13,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import CustomModal from "@/components/CustomModal";
+import CustomModal from "@/components/HeroModal";
 import { Logo } from '../Logo';
 import { LogOutIcon } from 'lucide-react';
 

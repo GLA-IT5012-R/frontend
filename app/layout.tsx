@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from '@/contexts/auth-context';
+import { CartProvider } from "@/contexts/cart-context";
 
 import { Bowlby_One_SC, DM_Mono } from "next/font/google";
 import "./globals.css";
@@ -39,10 +40,11 @@ export default function RootLayout({
           suppressHydrationWarning
         >
           <AuthProvider>
-            <main className="relative">
-              
-              {children}
-            </main>
+            <CartProvider>
+              <main className="relative">
+                {children}
+              </main>
+            </CartProvider>
           </AuthProvider>
         </body>
       </html>

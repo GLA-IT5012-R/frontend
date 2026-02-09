@@ -1,14 +1,26 @@
 'use client';
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { HorizontalLine, VerticalLine } from "@/components/Line";
 import clsx from "clsx";
 import { Scribble } from "./Scribble";
-import { skateboards } from "@/data/skateboards";
 import Link from "next/link";
 import Image from "next/image";
 import { ProductModelCanvas } from "@/components/ProductModelCanvas";
 import type { ProductModelProps } from '@/models/Product'
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button";
+import { Customizer } from "../../../components/Customizer";
+
 
 const VERTICAL_LINE_CLASSES =
   "absolute top-0 h-full stroke-2 text-stone-300 transition-colors group-hover:text-stone-400";
@@ -39,6 +51,7 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
   // const price = `$${(product.price / 100).toFixed(2)}`;
   const scribbleColor = SCRIBBLE_COLORS[idx % SCRIBBLE_COLORS.length]
 
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="group relative mx-auto w-full max-w-72 px-8 pt-4 ">
@@ -59,14 +72,6 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
           color={scribbleColor}
         />
 
-        {/* <Image
-          src={product.image.url}
-          alt={product.image.alt}
-          width={150}
-          height={150}
-          className=" mx-auto w-[58%] origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"
-        /> */}
-
         <ProductModelCanvas
           {...data.asset}
           textureUrls={data.asset.texture_urls[`${data.asset.type_id}`]}
@@ -84,13 +89,43 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
       </h3>
 
       <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-        <Link
-          // href={data.customizer_link.url}
-          href={'#'}
-          className="button-cutout inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom px-4 text-base fl-py-2/2.5 from-brand-blue to-brand-lime text-black"
-        >
-          {/* {data.customizer_link.text} */} Customize
-        </Link>
+        <Drawer direction="right" dismissible={false}
+
+          open={open}
+          onOpenChange={(val) => {
+            // 只允许通过按钮或 overlay 改变 open
+            setOpen(val);
+          }}>
+          <DrawerTrigger asChild>
+            <Link
+              href={'#'}
+              className="button-cutout inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom px-4 text-base fl-py-2/2.5 from-brand-blue to-brand-lime text-black"
+            >
+              Customize
+            </Link>
+          </DrawerTrigger>
+          <DrawerContent >
+            <DrawerHeader>
+              <DrawerTitle>Customizer Modal</DrawerTitle>
+              <DrawerDescription>Configurate your snowboard.</DrawerDescription>
+            </DrawerHeader>
+            <div className="w-full no-scrollbar overflow-y-auto px-4">
+              {/* Customizer content goes here */}
+              <Customizer
+                data={data}
+              />
+            </div>
+            <DrawerFooter>
+              <Button >Add to cart</Button>
+              <Button variant="destructive">Pay it</Button>
+
+              <DrawerClose asChild>
+                <Button onClick={() => setOpen(false)} variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+
       </div>
     </div>
   );
