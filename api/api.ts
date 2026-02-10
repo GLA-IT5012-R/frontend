@@ -3,7 +3,10 @@ export const api: any = {
     refreshToken: '/token/refresh/',
     testAuth: '/testAuth/',
     syncUser: '/sync-user/',
-    getProducts: '/products/list/'
+    getProducts: '/products/list/',
+    getProductAssets: '/products/assets/',
+    updateProductStatus: '/products/update-status/',
+    statsOverview: '/stats-overview/',
 
     // 订单
 

@@ -45,3 +45,22 @@ export const getProducts = (options?: {
   });
 };
 
+// 获取产品资产列表
+export const getProductAssets = (options?: {
+  page?: number;
+  page_size?: number;
+}) => {
+  const { page, page_size } = options || {};
+
+  return http.post(api.getProductAssets, {
+    page: page_size && !page ? 1 : page,
+    page_size,
+  });
+};
+
+// 更新产品状态
+export const updateProductStatus = (data: { id: string; status: boolean }) =>
+  http.post(api.updateProductStatus, data);
+
+// 获取基础统计信息
+export const getStatsOverview = () => http.get(api.statsOverview);
