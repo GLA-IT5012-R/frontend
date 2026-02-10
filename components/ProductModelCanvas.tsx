@@ -10,7 +10,6 @@ import { Canvas } from '@react-three/fiber'
 import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
-import type { ProductModelProps } from '@/models/Product'
 const FINISH_OPTIONS = {
     matte: {
         roughness: 0.5,
@@ -24,24 +23,18 @@ const FINISH_OPTIONS = {
 export function ProductModelCanvas({
     position = [0, 0, 5],
     orbitControls = true,
-    type,
-    type_id,
-    texture_urls,
+    typeId,
+    textureUrls,
     className,
     style,
     ...data
 }: any): React.ReactElement {
-
-    // console.log(texture_urls, type_id)
-
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas style={{ width: '100%', height: '100%' }}
                 camera={{ position: position, fov: 55 }}>
-
-                {/* <ambientLight intensity={1.5} /> */}
-                {/* <directionalLight position={[0, 5, 6]} intensity={5} color={'#ccc'} /> */}
                 <Suspense fallback={null}>
+                    {/* <Environment preset="city" /> */}
                     <Environment
                         files={"/hdr/warehouse-512.hdr"}
                         environmentIntensity={0.6}
@@ -52,10 +45,11 @@ export function ProductModelCanvas({
                         position={[1, 1, 1]}
                         intensity={1.6}
                     />
-                    {/* <Environment preset="city" /> */}
+                    
+                    {/* Model */}
                     <ProductModel
-                        textureUrls={texture_urls[`${type_id}`] || []}
-                        typeId={type_id}
+                        typeId={typeId}
+                        textureUrls={textureUrls}
                     />
                 </Suspense>
                 <OrbitControls enabled={orbitControls} />
@@ -70,7 +64,7 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
 
     // 根据 textureUrls 动态生成 texture
     const textures = useTexture(textureUrls || [])
-
+    console.log(textureUrls, typeId)
     // 可选：统一贴图参数
     textures.forEach((tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
@@ -133,7 +127,7 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
                         geometry={meshNode.geometry}
                         material={material}
                     >
-                       
+
                     </mesh>
                 )
             })}

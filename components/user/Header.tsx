@@ -20,9 +20,9 @@ import { LogOutIcon } from 'lucide-react';
 const menuItems = [
     { label: 'Home', href: '/' },
     { label: 'Products', href: '/products' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-    { label: 'Blog', href: '/blog' },
+    // { label: 'About', href: '/about' },
+    // { label: 'Contact', href: '/contact' },
+    // { label: 'Blog', href: '/blog' },
 ];
 
 export function Header() {

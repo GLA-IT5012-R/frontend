@@ -1,7 +1,7 @@
 'use client';
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
-import { CustomizerDrawer } from "./CustomizerDrawer";
+import { ProductItem } from "./ProductItem";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/api/auth";
 import ProductFilters from "@/components/ProductFilters";
@@ -124,7 +124,7 @@ const Products = () => {
 
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
         {dataList.map((product, idx) => (
-          <CustomizerDrawer key={`product-${product.id}`} idx={idx} data={product} />
+          <ProductItem key={`product-${product.id}`} idx={idx} data={product} />
         ))}
       </div>
 

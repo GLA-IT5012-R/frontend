@@ -37,16 +37,11 @@ const SCRIBBLE_COLORS = [
 export function SnowboardProduct({ idx, data }: any): React.ReactElement | null {
 
   useEffect(() => {
-    console.log('SnowboardProduct Rendered: ', data);
+    // console.log('SnowboardProduct Rendered: ', data);
+    console.log('Texture URLs for type_id:', data.p_textures);
+    console.log('Texture URLs for type_id:', data.p_textures[`${data.asset.type_id}`]);
   }, []);
 
-  // const product = skateboards.find((p) => p.id === data.id);
-
-  // if (!product) {
-  //   return null;
-  // }
-
-  // const price = `$${(product.price / 100).toFixed(2)}`;
   const scribbleColor = SCRIBBLE_COLORS[idx % SCRIBBLE_COLORS.length]
 
   const [open, setOpen] = useState(false);
@@ -70,15 +65,14 @@ export function SnowboardProduct({ idx, data }: any): React.ReactElement | null 
           color={scribbleColor}
         />
 
-        <ProductModelCanvas
-          {...data.asset}
-          textureUrls={data.asset.texture_urls[`${data.asset.type_id}`]}
-          // style={{ width: '100%', height: '300px' }}
-          // className="w-full h-[350px]"
-          orbitControls={false}
-          className=" w-full h-[350px] mx-auto origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"
-
-        />
+        {data.asset && data.p_textures?.[data.asset.type_id] && (
+          <ProductModelCanvas
+            typeId={data.asset.type_id}
+            textureUrls={data.p_textures[data.asset.type_id]|| []}
+            orbitControls={false}
+            className="w-full h-[350px] mx-auto origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"
+          />
+        )}
       </div>
       <HorizontalLine className={HORIZONTAL_LINE_CLASSES} />
 
