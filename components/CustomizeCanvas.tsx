@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
+import { Decal } from '@react-three/drei'
 
 const ENVIRONMENT_COLOR = "#969696"
 
@@ -79,7 +80,16 @@ interface ProductModelProps {
 }
 
 export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductModelProps) {
-    const { nodes } = useGLTF('/models/snowboard.glb') as any
+    const { nodes } = useGLTF('/models/snowboard002.glb') as any
+    const test_texture = useTexture("/textures/TX004.png")
+    test_texture.colorSpace = THREE.SRGBColorSpace
+    test_texture.flipY = false
+    test_texture.wrapS = THREE.RepeatWrapping
+    test_texture.wrapT = THREE.RepeatWrapping
+    test_texture.repeat.set(1, 1)
+    test_texture.anisotropy = 16
+    test_texture.needsUpdate = true
+
 
     // 加载纹理
     const textures = useTexture(textureUrls || [])
@@ -94,12 +104,20 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductM
     })
 
     // 动态材质
-    const material = useMemo(() => {
+    const baseMaterial = useMemo(() => {
         return new THREE.MeshStandardMaterial({
             ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
             map: textures[0] || null,
         })
     }, [finish, textures])
+
+    const testMaterial = useMemo(() => {
+        return new THREE.MeshStandardMaterial({
+            ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
+            map: test_texture,
+        })
+    }, [finish, test_texture])
+
 
     // mesh 切换逻辑
     const groupNodes = useMemo(() => {
@@ -115,11 +133,14 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductM
         <group position={[0, 0.465, 0]} rotation={[Math.PI / 3, 0, 0]}>
             {groupNodes.map((meshNode) => {
                 if (!meshNode) return null
+
+                const useTestTexture = meshNode.name.endsWith('_1')
                 return (
+
                     <mesh
                         key={meshNode.name}
                         geometry={meshNode.geometry}
-                        material={material}
+                        material={useTestTexture ? testMaterial : baseMaterial}
                         castShadow
                         receiveShadow
                     />

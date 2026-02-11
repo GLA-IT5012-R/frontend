@@ -1,7 +1,7 @@
 'use client';
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
-import { ProductItem } from "./ProductItem";
+import { ProductItem } from "../../../components/ProductItem";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/api/auth";
 import ProductFilters from "@/components/ProductFilters";
@@ -33,7 +33,7 @@ const Products = () => {
   const fetchProducts = (page = 1, filtersParam = filters) => {
     const params: Record<string, any> = {};
     if (filtersParam.keyword) params.keyword = filtersParam.keyword;
-    if (filtersParam.type) params.type = filtersParam.type;
+    if (filtersParam.type) params.type = filtersParam.type.toLowerCase();
     if (filtersParam.min_price !== null) params.min_price = filtersParam.min_price;
     if (filtersParam.max_price !== null) params.max_price = filtersParam.max_price;
 

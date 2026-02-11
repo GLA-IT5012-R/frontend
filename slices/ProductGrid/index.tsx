@@ -1,11 +1,11 @@
 'use client';
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
-import { SnowboardProduct } from "./ProductItem";
 import { SlideIn } from "@/components/SlideIn";
 import { ProductGridSlice } from "@/data/homepage";
 import { JSX, useEffect, useState } from "react";
 import { getProducts } from "@/api/auth";
+import { ProductItem } from "@/components/ProductItem";
 
 /**
  * Props for `ProductGrid`.
@@ -55,11 +55,8 @@ const ProductGrid = ({ slice }: ProductGridProps): JSX.Element => {
       </SlideIn>
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {hotList.map((product, idx) => (
-          <SnowboardProduct
-            key={`product-${product.id}`}
-            idx={idx}
-            data={product}
-          />
+          <ProductItem key={`product-${product.id}`} idx={idx} data={product} />
+
         ))}
       </div>
     </Bounded>

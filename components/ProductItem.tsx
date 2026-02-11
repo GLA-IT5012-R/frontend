@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Scribble } from "./Scribble";
+import { Scribble } from "../app/(public)/products/Scribble";
 import Link from "next/link";
 import { ProductModelCanvas } from "@/components/ProductModelCanvas";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
-import { Title } from './others'
+import { Title } from '../app/(public)/products/others'
 
 const SCRIBBLE_COLORS = [
   '#f97316', // orange

@@ -127,7 +127,6 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
                         geometry={meshNode.geometry}
                         material={material}
                     >
-
                     </mesh>
                 )
             })}
