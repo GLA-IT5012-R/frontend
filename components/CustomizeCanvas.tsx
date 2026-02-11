@@ -80,7 +80,9 @@ interface ProductModelProps {
 }
 
 export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductModelProps) {
-    const { nodes } = useGLTF('/models/snowboard002.glb') as any
+    const { nodes } = useGLTF('/models/snowboard.glb') as any
+    const { nodes: nodes2 } = useGLTF('/models/snowboard_sharp.glb')
+
     const test_texture = useTexture("/textures/TX004.png")
     test_texture.colorSpace = THREE.SRGBColorSpace
     test_texture.flipY = false
@@ -125,9 +127,10 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductM
             case 'SB-001': return [nodes.snowboard_camber_1, nodes.snowboard_camber_2, nodes.snowboard_camber_3, nodes.snowboard_camber_4]
             case 'SB-002': return [nodes.snowboard_flat_1, nodes.snowboard_flat_2, nodes.snowboard_flat_3, nodes.snowboard_flat_4]
             case 'SB-003': return [nodes.snowboard_rocker_1, nodes.snowboard_rocker_2, nodes.snowboard_rocker_3, nodes.snowboard_rocker_4]
+            case 'SB-004': return [nodes2.snowboard_sharp_1, nodes2.snowboard_sharp_2, nodes2.snowboard_sharp_3]
             default: return []
         }
-    }, [typeId, nodes])
+    }, [typeId, nodes, nodes2])
 
     return (
         <group position={[0, 0.465, 0]} rotation={[Math.PI / 3, 0, 0]}>
@@ -136,7 +139,6 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductM
 
                 const useTestTexture = meshNode.name.endsWith('_1')
                 return (
-
                     <mesh
                         key={meshNode.name}
                         geometry={meshNode.geometry}
@@ -150,7 +152,7 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductM
     )
 }
 
-useGLTF.preload('/models/snowboard.glb')
+useGLTF.preload(['/models/snowboard.glb', '/models/snowboard_sharp.glb'])
 
 // FLOOR
 function StageFloor() {

@@ -54,7 +54,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
   }, [data]);
 
   useEffect(() => {
-    console.log('ProductItem Rendered: ', data);
+    console.log('ProductItem Rendered: ', data.id);
   }, [data]);
 
   // --------------------------
