@@ -10,25 +10,31 @@ import { Canvas } from '@react-three/fiber'
 import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
-const FINISH_OPTIONS = {
-    matte: {
-        roughness: 0.5,
-        metalness: 0.2,
-    },
-    glossy: {
-        roughness: 0.3,
-        metalness: 0.2,
-    },
+
+
+
+const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> = {
+    matte: { roughness: 0.5, metalness: 0.2 },
+    glossy: { roughness: 0.3, metalness: 0.3 },
 }
+const EDGE_MATERIAL_CONFIG = {
+    black: { color: '#171717' },
+    white: { color: '#f5f5f5' },
+}
+
+
 export function ProductModelCanvas({
     position = [0, 0, 5],
     orbitControls = true,
+    finish = 'matte',
     typeId,
     textureUrls,
     className,
     style,
     ...data
 }: any): React.ReactElement {
+
+
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas style={{ width: '100%', height: '100%' }}
@@ -45,11 +51,12 @@ export function ProductModelCanvas({
                         position={[1, 1, 1]}
                         intensity={1.6}
                     />
-                    
+
                     {/* Model */}
                     <ProductModel
                         typeId={typeId}
                         textureUrls={textureUrls}
+                        finish={finish}
                     />
                 </Suspense>
                 <OrbitControls enabled={orbitControls} />
@@ -59,10 +66,9 @@ export function ProductModelCanvas({
 }
 
 
-export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
+export function ProductModel({ textureUrls, typeId ,finish = 'matte'}: ProductModelInnerProps) {
     const { nodes } = useGLTF('/models/snowboard.glb')
     const { nodes: nodes2 } = useGLTF('/models/snowboard_sharp.glb')
-
     // 根据 textureUrls 动态生成 texture
     const textures = useTexture(textureUrls || [])
     console.log(textureUrls, typeId)
@@ -77,11 +83,25 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
         tex.repeat.set(1, 1);
         tex.anisotropy = 16;
     })
+
+    const deckMaterial = useMemo(() => {
+        return new THREE.MeshStandardMaterial({
+            ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
+            map: textures[0] || null,
+        })
+    }, [finish, textures])
+    // 2️⃣ 边缘材质（固定黑）
+    const edgeMaterial = useMemo(() => {
+        return new THREE.MeshStandardMaterial({
+            ...EDGE_MATERIAL_CONFIG.black,
+            ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
+        })
+    }, [finish])
+
     const material = new THREE.MeshStandardMaterial({
         map: textures[0] || null,
         ...FINISH_OPTIONS.glossy
     })
-    console.log(typeId,"QQQQQQQQQQQQ")
     // 选择 mesh 组
     const groupNodes = useMemo(() => {
         switch (typeId) {
@@ -104,7 +124,9 @@ export function ProductModel({ textureUrls, typeId }: ProductModelInnerProps) {
 
                 // 对应顺序替换贴
                 if (!meshNode) return null
-                const map = textures[0] || null
+                const isEdge = meshNode.name.endsWith('_3') || meshNode.name.endsWith('_4')
+                let material = deckMaterial
+                if (isEdge) material = edgeMaterial
                 return (
                     <mesh
                         key={meshNode.name}

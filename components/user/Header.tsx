@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { SignedIn, SignedOut, SignIn, SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { syncUserApi } from "@/api/auth";
-
 // UI Components
 import {
     DropdownMenu,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import CustomModal from "@/components/HeroModal";
 import { Logo } from '../Logo';
-import { LogOutIcon } from 'lucide-react';
+import { LogOutIcon, ShoppingCart } from 'lucide-react';
 
 const menuItems = [
     { label: 'Home', href: '/' },
@@ -82,7 +81,6 @@ export function Header() {
                 {/* Desktop Auth Buttons */}
 
                 <SignedIn>
-
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <span className='cursor-pointer'>Hi,&nbsp;{firstName}</span>
@@ -110,6 +108,13 @@ export function Header() {
                             </SignOutButton>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    {/* <CartButton /> */}
+                    <Link
+                        href="/cart"
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 hover:brightness-110"
+                    >
+                        <ShoppingCart size={20} strokeWidth={2} />
+                    </Link>
                 </SignedIn>
 
 

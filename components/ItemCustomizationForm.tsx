@@ -7,6 +7,8 @@ export const LABELS = {
   FINISH: "Sheet Finish",
   FLEX: "Flexibility / Porosity",
   TEXTURE: "Texture",
+  CUSTOM_TEXT: "Custom Text",
+  CUSTOM_TEXT_DESC: "Text will be shown on the product",
   QUANTITY: "Quantity",
   QUANTITY_DESC: "Enter the quantity you want to purchase",
 };
@@ -114,6 +116,24 @@ export function ProductCustomizationForm({ data, formData, onChange }: ProductCu
                     <span className="text-xs text-gray-500">Upload</span>
                   </label>
                 </div>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+
+          {/* Custom Text */}
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel>{LABELS.CUSTOM_TEXT}</FieldLabel>
+                <FieldDescription>{LABELS.CUSTOM_TEXT_DESC}</FieldDescription>
+                <Input
+                  type="text"
+                  placeholder="e.g. Your name or slogan"
+                  maxLength={32}
+                  value={formData?.p_custom_text ?? ""}
+                  onChange={(e) => handleChange("p_custom_text", e.target.value)}
+                  className="mt-2"
+                />
               </Field>
             </FieldGroup>
           </FieldSet>

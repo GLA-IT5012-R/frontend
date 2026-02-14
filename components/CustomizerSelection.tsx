@@ -36,6 +36,8 @@ export function CustomizerSelection({
             typeId={data.asset.type_id}
             finish={localFormData?.p_finish || ""}
             textureUrls={data.p_textures[data.asset.type_id] || []}
+            customText={localFormData?.p_custom_text ?? ""}
+            isDoubleSided={data?.is_double_sided !== false && data?.is_double_sided !== "false"}
             orbitControls={true}
             className="h-full w-full"
           />

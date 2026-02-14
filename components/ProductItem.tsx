@@ -102,6 +102,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
           <ProductModelCanvas
             typeId={data.asset.type_id}
             textureUrls={data.p_textures[data.asset.type_id] || []}
+            finish={data.asset.finish || 'matte'}
             orbitControls={false}
             className="w-full h-[350px] mx-auto origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"
           />

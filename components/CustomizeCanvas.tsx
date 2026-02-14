@@ -1,23 +1,25 @@
 'use client'
 
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useMemo, useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/drei'
+import { useGLTF, OrbitControls, Environment, useTexture, Decal } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
-import { Decal } from '@react-three/drei'
 
 const ENVIRONMENT_COLOR = "#969696"
 
 const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> = {
     matte: { roughness: 0.5, metalness: 0.2 },
-    glossy: { roughness: 0.3, metalness: 0.2 },
+    glossy: { roughness: 0.3, metalness: 0.3 },
 }
 
 interface CustomizerCanvasProps {
     typeId: string
     textureUrls: string[] | undefined
     finish?: string
+    customText?: string
+    /** When false, the second side (material2) uses black; when true, both sides use texture. */
+    isDoubleSided?: boolean
     position?: [number, number, number]
     orbitControls?: boolean
     className?: string
@@ -30,6 +32,8 @@ export function CustomizerCanvas({
     typeId,
     textureUrls,
     finish = 'matte',
+    customText = '',
+    isDoubleSided = true,
     className,
     style,
 }: CustomizerCanvasProps) {
@@ -43,11 +47,17 @@ export function CustomizerCanvas({
                     <directionalLight
                         castShadow
                         position={[2, 5, 2]}
+                        intensity={2}
+                        shadow-mapSize-width={2048}
+                        shadow-mapSize-height={2048}
+                    />
+                    <directionalLight
+
+                        position={[-2, 0, -2]}
                         intensity={1.5}
                         shadow-mapSize-width={2048}
                         shadow-mapSize-height={2048}
                     />
-
                     <fog attach="fog" args={[ENVIRONMENT_COLOR, 3, 30]} />
                     <color attach="background" args={[ENVIRONMENT_COLOR]} />
 
@@ -59,6 +69,8 @@ export function CustomizerCanvas({
                         typeId={typeId}
                         textureUrls={textureUrls}
                         finish={finish}
+                        customText={customText}
+                        isDoubleSided={isDoubleSided}
                     />
                 </Suspense>
 
@@ -77,77 +89,186 @@ interface ProductModelProps {
     textureUrls: string[] | undefined
     typeId: string
     finish?: string
+    customText?: string
+    isDoubleSided?: boolean
 }
 
-export function ProductModel({ textureUrls, typeId, finish = 'matte' }: ProductModelProps) {
+function setupTexture(tex: THREE.Texture) {
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.flipY = false
+    tex.wrapS = THREE.RepeatWrapping
+    tex.wrapT = THREE.RepeatWrapping
+    tex.repeat.set(1, 1)
+    tex.anisotropy = 16
+    tex.needsUpdate = true
+}
+const EDGE_MATERIAL_CONFIG = {
+    black: { color: '#171717' },
+    white: { color: '#f5f5f5' },
+}
+
+/** Creates a texture from text (canvas 2D → CanvasTexture). Caller must dispose when done. */
+function createTextTexture(text: string): THREE.CanvasTexture | null {
+    if (typeof document === 'undefined' || !text.trim()) return null
+    const size = 512
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+    ctx.fillStyle = 'rgba(0,0,0,0.01)'
+    ctx.fillRect(0, 0, size, size)
+    ctx.fillStyle = '#000'
+    ctx.font = ' 30px ro , system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(text.trim(), size / 2, size / 2)
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.needsUpdate = true
+    return tex
+}
+
+export function ProductModel({ textureUrls, typeId, finish = 'matte', customText = '', isDoubleSided = true }: ProductModelProps) {
     const { nodes } = useGLTF('/models/snowboard.glb') as any
-    const { nodes: nodes2 } = useGLTF('/models/snowboard_sharp.glb')
+    const { nodes: sharpNodes } = useGLTF('/models/snowboard_sharp.glb') as any
+    const testTexture = useTexture(['/textures/test.png'])
 
-    const test_texture = useTexture("/textures/TX004.png")
-    test_texture.colorSpace = THREE.SRGBColorSpace
-    test_texture.flipY = false
-    test_texture.wrapS = THREE.RepeatWrapping
-    test_texture.wrapT = THREE.RepeatWrapping
-    test_texture.repeat.set(1, 1)
-    test_texture.anisotropy = 16
-    test_texture.needsUpdate = true
+    /* =======================
+       TEXTURE
+    ======================= */
 
-
-    // 加载纹理
     const textures = useTexture(textureUrls || [])
-    textures.forEach((tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace
-        tex.flipY = false
-        tex.wrapS = THREE.RepeatWrapping
-        tex.wrapT = THREE.RepeatWrapping
-        tex.repeat.set(1, 1)
-        tex.anisotropy = 16
-        tex.needsUpdate = true
-    })
 
-    // 动态材质
-    const baseMaterial = useMemo(() => {
+    useMemo(() => {
+        textures.forEach(setupTexture)
+        testTexture.forEach(setupTexture)
+
+    }, [textures, testTexture])
+
+    /* =======================
+       MATERIALS
+    ======================= */
+
+    // 1️⃣ 板面材质（贴图）
+    const deckMaterial = useMemo(() => {
         return new THREE.MeshStandardMaterial({
             ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
             map: textures[0] || null,
         })
     }, [finish, textures])
 
-    const testMaterial = useMemo(() => {
+    // 2️⃣ 边缘材质（固定黑）
+    const edgeMaterial = useMemo(() => {
         return new THREE.MeshStandardMaterial({
+            ...EDGE_MATERIAL_CONFIG.black,
             ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
-            map: test_texture,
         })
-    }, [finish, test_texture])
+    }, [finish])
 
+    // 3️⃣ 单面时的背面材质：双面时 back=front 都用 deckMaterial；单面时背面默认黑
+    const backMaterial = useMemo(() => {
+        if (isDoubleSided) return null // 双面时背面与正面一致，渲染里 _2 会用 deckMaterial
+        return new THREE.MeshStandardMaterial({
+            ...EDGE_MATERIAL_CONFIG.white,
+            ...(FINISH_OPTIONS[finish] || FINISH_OPTIONS.matte),
+        })
+    }, [isDoubleSided, finish])
 
-    // mesh 切换逻辑
+    /* =======================
+       MESH GROUP SWITCH
+    ======================= */
+
     const groupNodes = useMemo(() => {
         switch (typeId) {
-            case 'SB-001': return [nodes.snowboard_camber_1, nodes.snowboard_camber_2, nodes.snowboard_camber_3, nodes.snowboard_camber_4]
-            case 'SB-002': return [nodes.snowboard_flat_1, nodes.snowboard_flat_2, nodes.snowboard_flat_3, nodes.snowboard_flat_4]
-            case 'SB-003': return [nodes.snowboard_rocker_1, nodes.snowboard_rocker_2, nodes.snowboard_rocker_3, nodes.snowboard_rocker_4]
-            case 'SB-004': return [nodes2.snowboard_sharp_1, nodes2.snowboard_sharp_2, nodes2.snowboard_sharp_3]
-            default: return []
+            case 'SB-001':
+                return [
+                    nodes.snowboard_camber_1,
+                    nodes.snowboard_camber_2,
+                    nodes.snowboard_camber_3,
+                    nodes.snowboard_camber_4,
+                ]
+            case 'SB-002':
+                return [
+                    nodes.snowboard_flat_1,
+                    nodes.snowboard_flat_2,
+                    nodes.snowboard_flat_3,
+                    nodes.snowboard_flat_4,
+                ]
+            case 'SB-003':
+                return [
+                    nodes.snowboard_rocker_1,
+                    nodes.snowboard_rocker_2,
+                    nodes.snowboard_rocker_3,
+                    nodes.snowboard_rocker_4,
+                ]
+            case 'SB-004':
+                return [
+                    sharpNodes.snowboard_sharp_1,
+                    sharpNodes.snowboard_sharp_2,
+                    sharpNodes.snowboard_sharp_3,
+                ]
+            default:
+                return []
         }
-    }, [typeId, nodes, nodes2])
+    }, [typeId, nodes, sharpNodes])
+
+    /* =======================
+       CUSTOM TEXT DECAL
+    ======================= */
+    const decalTexture = useMemo(
+        () => createTextTexture(customText),
+        [customText]
+    )
+    useEffect(() => {
+        return () => {
+            if (decalTexture) decalTexture.dispose()
+        }
+    }, [decalTexture])
+
+    const deckMeshRef = useRef<THREE.Mesh>(null)
+
+    /* =======================
+       RENDER
+    ======================= */
+
+    const firstDeckNode = groupNodes.find(
+        (n) => n && !n.name.endsWith('_3') && !n.name.endsWith('_4')
+    )
 
     return (
-        <group position={[0, 0.465, 0]} rotation={[Math.PI / 3, 0, 0]}>
+        <group position={[0, 0.46, 0]} rotation={[Math.PI / 2.3, 0, 0]}>
             {groupNodes.map((meshNode) => {
                 if (!meshNode) return null
 
-                const useTestTexture = meshNode.name.endsWith('_1')
+                const isEdge = meshNode.name.endsWith('_3') || meshNode.name.endsWith('_4')
+                const isSecondDeck = meshNode.name.endsWith('_2')
+                const isFirstDeck = meshNode === firstDeckNode
+
+                let material = deckMaterial
+                if (isEdge) material = edgeMaterial
+
+                if (!isDoubleSided && isSecondDeck && backMaterial) material = backMaterial
+
                 return (
                     <mesh
                         key={meshNode.name}
+                        ref={isFirstDeck ? deckMeshRef : undefined}
                         geometry={meshNode.geometry}
-                        material={useTestTexture ? testMaterial : baseMaterial}
+                        material={material}
                         castShadow
                         receiveShadow
                     />
                 )
             })}
+            {/* Custom text decal on deck (aligned with board tilt) */}
+            {decalTexture && (
+                <Decal
+                    mesh={deckMeshRef}
+                    rotation={[-Math.PI / 3, 0, 0]}
+                    map={decalTexture}
+                />
+            )}
         </group>
     )
 }
