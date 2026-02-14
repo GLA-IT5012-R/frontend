@@ -26,7 +26,7 @@ const Products = () => {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(8);
+  const [pageSize] = useState(2);
   const [totalPages, setTotalPages] = useState(1);
 
   // ---------- 拉取产品数据 ----------
