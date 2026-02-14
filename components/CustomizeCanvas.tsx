@@ -5,8 +5,8 @@ import { Canvas } from '@react-three/fiber'
 import { useGLTF, OrbitControls, Environment, useTexture, Decal } from '@react-three/drei'
 import * as THREE from 'three'
 import { clsx } from 'clsx'
+const ENVIRONMENT_COLOR = "#969696";
 
-const ENVIRONMENT_COLOR = "#969696"
 
 const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> = {
     matte: { roughness: 0.5, metalness: 0.2 },
@@ -58,7 +58,7 @@ export function CustomizerCanvas({
                         shadow-mapSize-width={2048}
                         shadow-mapSize-height={2048}
                     />
-                    <fog attach="fog" args={[ENVIRONMENT_COLOR, 3, 30]} />
+                    <fog attach="fog" args={[ENVIRONMENT_COLOR, 3, 20]} />
                     <color attach="background" args={[ENVIRONMENT_COLOR]} />
 
                     {/* FLOOR */}
@@ -119,7 +119,7 @@ function createTextTexture(text: string): THREE.CanvasTexture | null {
     ctx.fillStyle = 'rgba(0,0,0,0.01)'
     ctx.fillRect(0, 0, size, size)
     ctx.fillStyle = '#000'
-    ctx.font = ' 30px ro , system-ui, sans-serif'
+    ctx.font = ' 10px ro , system-ui, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(text.trim(), size / 2, size / 2)
@@ -275,17 +275,31 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte', customText
 
 useGLTF.preload(['/models/snowboard.glb', '/models/snowboard_sharp.glb'])
 
+
 // FLOOR
 function StageFloor() {
-    const normalMap = useTexture("/concrete-normal.avif")
+    const [diffuseMap, normalMap, roughMap, aoMap] = useTexture([
+        "/snow_diff.jpg",
+        "/snow_normal.png",
+        "/snow_rough.png",
+        "/snow_ao.jpg",
+    ])
+
     normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping
-    normalMap.repeat.set(30, 30)
-    normalMap.anisotropy = 8
+    diffuseMap.wrapS = diffuseMap.wrapT = THREE.RepeatWrapping
+
+    normalMap.repeat.set(10, 10)
+    diffuseMap.repeat.set(10, 10)
+    roughMap.repeat.set(10, 10)
+    aoMap.repeat.set(10, 10)
 
     const material = new THREE.MeshStandardMaterial({
-        roughness: 0.75,
-        color: ENVIRONMENT_COLOR,
+        map: diffuseMap,
         normalMap,
+        roughnessMap: roughMap,
+        aoMap,
+        roughness: 0.85,
+        color: 0xffffff
     })
 
     return (

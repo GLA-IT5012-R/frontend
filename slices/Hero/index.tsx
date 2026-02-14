@@ -100,12 +100,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
       </div>
       {/* 3d-模型 */}
       
-      <InteractiveSnowboard 
-        // deckTextureURL={deckTextureURL}
-        // wheelTextureURL={wheelTextureURL}
-        // truckColor={truckColor}
-        // boltColor={boltColor}
-      />
+      <InteractiveSnowboard />
     </Bounded>
   );
 };

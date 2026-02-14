@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { uploadTextureApi } from "@/api/auth";
 
 export const LABELS = {
   SIZE: "Size",
@@ -16,17 +17,43 @@ export const LABELS = {
 interface ProductCustomizationFormProps {
   data: any;
   formData: any;
+  /** 用户上传的纹理 URL，单独保存以便切回预设后仍可回显与再次选择 */
+  uploadedTextureUrl?: string | null;
   onChange: (field: string, value: any) => void;
 }
 
-export function ProductCustomizationForm({ data, formData, onChange }: ProductCustomizationFormProps) {
+export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = null, onChange }: ProductCustomizationFormProps) {
   const sizes = data.p_size?.split(",") || [];
   const finishes = data.p_finish?.split(",") || [];
   const flexes = data.p_flex?.split(",") || [];
   const textures = data.p_textures || {};
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleChange = (field: string, value: any) => {
     onChange(field, value);
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const res = await uploadTextureApi(file);
+      const url = res.data?.url;
+      if (url) {
+        handleChange("p_texture", url);
+      } else {
+        setUploadError("Upload succeeded but no URL returned.");
+      }
+    } catch (err: unknown) {
+      const ax = err as { response?: { data?: { message?: string } }; message?: string };
+      setUploadError(ax?.response?.data?.message ?? ax?.message ?? "Upload failed.");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   };
 
   const renderButtonGroup = (items: string[], field: string) => (
@@ -87,7 +114,7 @@ export function ProductCustomizationForm({ data, formData, onChange }: ProductCu
                 <FieldLabel>{LABELS.TEXTURE}</FieldLabel>
                 <FieldDescription>Select a texture or upload your own image</FieldDescription>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {Object.entries(textures).map(([key, urls]: any) => (
+                  {(Object.entries(textures) as [string, string[]][]).map(([key, urls]) => (
                     <button
                       key={key}
                       type="button"
@@ -100,21 +127,42 @@ export function ProductCustomizationForm({ data, formData, onChange }: ProductCu
                     </button>
                   ))}
 
-                  <label className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400">
+                  {/* 用户上传的图片回显：用 uploadedTextureUrl 持久显示，切换预设后仍存在；再次上传即替换 */}
+                  {uploadedTextureUrl && (
+                    <button
+                      type="button"
+                      className={`w-16 h-16 rounded-full border-2 overflow-hidden shrink-0 ${
+                        formData?.p_texture === uploadedTextureUrl ? "border-blue-500" : "border-gray-300"
+                      }`}
+                      onClick={() => handleChange("p_texture", uploadedTextureUrl)}
+                    >
+                      <img
+                        src={uploadedTextureUrl}
+                        alt="Uploaded"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  )}
+
+                  <label
+                    className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${
+                      uploading ? "border-gray-200 bg-gray-50 cursor-not-allowed" : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
                     <input
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const url = URL.createObjectURL(file);
-                          handleChange("p_texture", url);
-                        }
-                      }}
+                      disabled={uploading}
+                      onChange={handleUpload}
                     />
-                    <span className="text-xs text-gray-500">Upload</span>
+                    <span className="text-xs text-gray-500">
+                      {uploading ? "..." : "Upload"}
+                    </span>
                   </label>
+                  {uploadError && (
+                    <p className="text-xs text-red-500 mt-1 w-full">{uploadError}</p>
+                  )}
                 </div>
               </Field>
             </FieldGroup>

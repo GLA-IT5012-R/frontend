@@ -79,7 +79,7 @@ export const homepage: Homepage = {
   slices: [
     {
       slice_type: 'hero',
-      heading: "Escape the Cul-de-sac",
+      heading: "Go Beyond the Snow-world",
       body: [
         { type: 'paragraph', text: "Not just a board, your board. Design a board that's as real as the places you take it.", emphasis: "your board" }
       ],

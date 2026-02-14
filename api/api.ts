@@ -7,7 +7,8 @@ export const api: any = {
     getProductAssets: '/products/assets/',
     updateProductStatus: '/products/update-status/',
     statsOverview: '/stats-overview/',
-
+    upload: '/products/upload/',
+    addCustomDesign: '/products/add-design/',
     // 订单
 
     // 管理端接口

@@ -11,7 +11,7 @@ import * as THREE from 'three'
 export function Snowboard({ topTexture, bottomColor, sideColor = "#000000", ...props }) {
   const { nodes, materials } = useGLTF('/models/snowboard.glb')
 
-  const topTex = useTexture(topTexture || "/textures/TX001.png");
+  const topTex = useTexture(topTexture || "/textures/headboard.png");
   topTex.flipY = false; // Adjust if your texture appears upside down
   topTex.wrapS = THREE.RepeatWrapping;
   topTex.wrapT = THREE.RepeatWrapping;
@@ -22,7 +22,7 @@ export function Snowboard({ topTexture, bottomColor, sideColor = "#000000", ...p
   // Adjust texture mapping if needed, or simply apply to material
   const topMaterial = new THREE.MeshStandardMaterial({
     map: topTex,
-    roughness: 0.25,
+    roughness: 0.2,
     metalness: 0.6,
   });
 

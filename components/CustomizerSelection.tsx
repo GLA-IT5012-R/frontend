@@ -9,33 +9,65 @@ interface CustomizerSelectionProps {
   renderButtons?: (formData: any) => React.ReactNode;
 }
 
+function isTextureUrl(v: string): boolean {
+  return typeof v === "string" && (v.startsWith("/") || v.startsWith("http"));
+}
+
 export function CustomizerSelection({
   data,
   formData,
   onChange,
   renderButtons,
 }: CustomizerSelectionProps): React.ReactElement {
-  // 内部 state 用于本地表单同步
   const [localFormData, setLocalFormData] = useState(formData);
+  // 用户上传的纹理 URL 单独保存，切换回预设后仍可回显与再次选择
+  const [uploadedTextureUrl, setUploadedTextureUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setLocalFormData(formData);
   }, [formData]);
 
+  useEffect(() => {
+    const v = formData?.p_texture;
+    if (v && isTextureUrl(String(v))) setUploadedTextureUrl(v);
+  }, [formData?.p_texture]);
+
   const handleFormChange = (field: string, value: any) => {
+    if (field === "p_texture" && isTextureUrl(String(value))) {
+      setUploadedTextureUrl(value);
+    }
     onChange(field, value);
     setLocalFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+
+  const typeId = data?.asset?.type_id;
+  const presetTextures = typeId ? data?.p_textures?.[typeId] : undefined;
+  const currentPTexture = localFormData?.p_texture;
+
+  const textureUrlsForCanvas: string[] = (() => {
+    if (!presetTextures) return [];
+    const firstPresetUrl = Array.isArray(presetTextures)
+      ? presetTextures[0]
+      : (Object.values(presetTextures as Record<string, string[]>) as string[][])[0]?.[0];
+    if (!currentPTexture) return firstPresetUrl ? [firstPresetUrl] : [];
+    if (isTextureUrl(currentPTexture)) return [currentPTexture];
+    if (Array.isArray(presetTextures)) return firstPresetUrl ? [firstPresetUrl] : [];
+    const urls = (presetTextures as Record<string, string[]>)[currentPTexture];
+    return urls?.length ? [urls[0]] : firstPresetUrl ? [firstPresetUrl] : [];
+  })();
+
+
+  
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-[600px] border border-gray-200 rounded-lg overflow-hidden">
       {/* Left: 3D Model Canvas */}
-      <div className="w-full lg:w-1/2 bg-gray-50 h-[500px] lg:h-auto relative flex-shrink-0">
-        {data.asset && data.p_textures?.[data.asset.type_id] && (
+      <div className="w-full lg:w-1/2 bg-gray-50 h-[500px] lg:h-auto relative shrink-0">
+        {data.asset && (presetTextures || textureUrlsForCanvas.length > 0) && (
           <CustomizerCanvas
             typeId={data.asset.type_id}
             finish={localFormData?.p_finish || ""}
-            textureUrls={data.p_textures[data.asset.type_id] || []}
+            textureUrls={textureUrlsForCanvas}
             customText={localFormData?.p_custom_text ?? ""}
             isDoubleSided={data?.is_double_sided !== false && data?.is_double_sided !== "false"}
             orbitControls={true}
@@ -50,6 +82,7 @@ export function CustomizerSelection({
           <ProductCustomizationForm
             data={data}
             formData={localFormData}
+            uploadedTextureUrl={uploadedTextureUrl}
             onChange={handleFormChange}
           />
         </div>

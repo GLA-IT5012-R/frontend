@@ -64,3 +64,29 @@ export const updateProductStatus = (data: { id: string; status: boolean }) =>
 
 // 获取基础统计信息
 export const getStatsOverview = () => http.get(api.statsOverview);
+
+export type UploadTextureResponse = {
+  code: number;
+  data: { path: string; url: string; filename: string };
+  message: string;
+};
+
+// 上传纹理图片（multipart/form-data，字段 file 或 image）；拦截器返回 response.data
+export const uploadTextureApi = (file: File): Promise<UploadTextureResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return http.post(api.upload, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }) as Promise<UploadTextureResponse>;
+};
+
+
+// 添加用户定制记录
+export const addCustomDesignApi = (data: {
+  product_id: number;
+  user_id: number;
+  p_size: string;
+  p_finish: string;
+  p_flex: string;
+  p_textures: string[]; // 纹理 URL 列表
+}) => http.post(api.addCustomDesign, data);

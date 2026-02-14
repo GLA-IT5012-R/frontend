@@ -19,38 +19,23 @@ type Props = {
   boltColor: string;
 };
 
-export function InteractiveSnowboard({
-  // deckTextureURL,
-  // wheelTextureURL,
-  // truckColor,
-  // boltColor,
-}: any) {
+export function InteractiveSnowboard() {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <Canvas
         className="min-h-[60rem] w-full bg"
-        camera={{ position: INITIAL_CAMERA_POSITION, fov: 55, near: 0.01, far: 10000 }}
+        camera={{ position: INITIAL_CAMERA_POSITION, fov: 55, near: 0.001, far: 100000 }}
       >
         <Suspense fallback={null}>
-          <Scene
-          // deckTextureURL={deckTextureURL}
-          // wheelTextureURL={wheelTextureURL}
-          // truckColor={truckColor}
-          // boltColor={boltColor}
-          />
+          <Scene />
         </Suspense>
       </Canvas>
     </div>
   );
 }
 
-function Scene({
-  // deckTextureURL,
-  // wheelTextureURL,
-  // truckColor,
-  // boltColor,
-}: any) {
+function Scene() {
   const containerRef = useRef<THREE.Group>(null);
   const originRef = useRef<THREE.Group>(null);
 
@@ -66,21 +51,23 @@ function Scene({
   useEffect(() => {
     if (!containerRef.current || !originRef.current) return;
 
-    // gsap.to(containerRef.current.position, {
-    //   x: 0.2,
-    //   duration: 3,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: "sine.inOut",
-    // });
+    gsap.to(containerRef.current.position, {
+      x: 0.5,
+      rotateZ: Math.PI / 20,
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
 
-    // gsap.to(originRef.current.rotation, {
-    //   y: Math.PI / 64,
-    //   duration: 3,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: "sine.inOut",
-    // });
+    gsap.to(originRef.current.rotation, {
+      y: Math.PI / 30,
+      rotateZ: Math.PI / 60,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
   }, []);
 
   useEffect(() => {
@@ -171,13 +158,17 @@ function Scene({
 
   return (
     <group>
-      <Environment preset="city" />
+      <Environment preset="city" environmentIntensity={0.4} />
+      
+      
+      {/* <Environment
+        files={"/hdr/warehouse-512.hdr"}
+        environmentIntensity={0.6}
+      /> */}
       <group ref={originRef}>
         <group ref={containerRef} position={[0, 0, 0]}>
           <group position={[0, 0, 0]}>
-            <Snowboard
-              constantWheelSpin
-            />
+            <Snowboard />
 
             <Hotspot
               isVisible={!animating && showHotspot.front}
@@ -213,8 +204,7 @@ function Scene({
         </group>
       </group>
       <ContactShadows opacity={0.6} position={[0, -0.08, 0]} />
-
-      {/* <group
+      <group
         rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
         position={[0, -0.09, -0.5]}
         scale={[0.2, 0.2, 0.2]}
@@ -227,7 +217,7 @@ function Scene({
         >
           <WavyPaths />
         </Html>
-      </group> */}
+      </group>
     </group>
   );
 }

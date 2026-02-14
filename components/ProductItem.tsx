@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
+import { addCustomDesignApi } from "@/api/auth";
 
 const SCRIBBLE_COLORS = [
   '#f97316', // orange
@@ -43,7 +44,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
     p_size: getDefault(data.p_size),
     p_finish: getDefault(data.p_finish),
     p_flex: getDefault(data.p_flex),
-    p_texture: Object.keys(data.p_textures || {})[0] || "",
+    p_texture: data.p_textures[data.asset.type_id]?.[0] || null,
     quantity: 1,
   });
 
@@ -53,20 +54,32 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log('ProductItem Rendered: ', data.id);
-  }, [data]);
 
   // --------------------------
   // 加入购物车逻辑
   // --------------------------
   const onAddToCart = (formData: any) => {
     if (!formData) return;
+
     console.log("Add to cart:", {
       productId: data.id,
       ...formData
     });
     alert(`Added to cart: ${data.name} (Qty: ${formData.quantity})`);
+    // submit formData to backend
+    addCustomDesignApi({
+      product_id: data.id,
+      user_id: 10001, // TODO: replace with actual user ID
+      p_size: formData.p_size,
+      p_finish: formData.p_finish,
+      p_flex: formData.p_flex,
+      p_textures: formData.p_textures || [],
+    }).then((res) => {
+      console.log("Custom design added:", res);
+
+    }).catch((err) => {
+      console.error("Failed to add custom design:", err);
+    });
   }
 
   // --------------------------
