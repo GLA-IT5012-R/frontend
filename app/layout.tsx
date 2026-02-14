@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from "@/contexts/cart-context";
-
+import { Toaster } from "@/components/ui/sonner"
 import { Bowlby_One_SC, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { Leva } from "leva";
@@ -46,6 +46,7 @@ export default function RootLayout({
               </main>
             </CartProvider>
           </AuthProvider>
+          <Toaster richColors={true} />
         </body>
       </html>
     </ClerkProvider>
