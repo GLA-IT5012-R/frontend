@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
 import { addCustomDesignApi } from "@/api/auth";
+import { toast } from "sonner"
 
 const SCRIBBLE_COLORS = [
   '#f97316', // orange
@@ -65,7 +66,9 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
       productId: data.id,
       ...formData
     });
-    alert(`Added to cart: ${data.name} (Qty: ${formData.quantity})`);
+    // alert(`Added to cart: ${data.name} (Qty: ${formData.quantity})`);
+
+    toast.success(`Added to cart: ${data.name} (Qty: ${formData.quantity})`)
     // submit formData to backend
     addCustomDesignApi({
       product_id: data.id,

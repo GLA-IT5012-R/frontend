@@ -40,11 +40,11 @@ export default function RootLayout({
           suppressHydrationWarning
         >
           <AuthProvider>
-            <CartProvider>
+            {/* <CartProvider> */}
               <main className="relative">
                 {children}
               </main>
-            </CartProvider>
+            {/* </CartProvider> */}
           </AuthProvider>
           <Toaster richColors={true} />
         </body>

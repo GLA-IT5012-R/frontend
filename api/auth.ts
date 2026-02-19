@@ -46,13 +46,13 @@ export const getProducts = (options?: {
 };
 
 // 获取产品资产列表
-export const getProductAssets = (options?: {
+export const getAssetsList = (options?: {
   page?: number;
   page_size?: number;
 }) => {
   const { page, page_size } = options || {};
 
-  return http.post(api.getProductAssets, {
+  return http.post(api.getAssetsList, {
     page: page_size && !page ? 1 : page,
     page_size,
   });
@@ -90,3 +90,17 @@ export const addCustomDesignApi = (data: {
   p_flex: string;
   p_textures: string[]; // 纹理 URL 列表
 }) => http.post(api.addCustomDesign, data);
+
+// 添加产品
+export const addProductApi = (data: {
+  name: string;          // 产品名称
+  type?: number;         // 产品类型（单品1/套装2），默认1
+  price: string;         // 产品价格，例如 "399.99"
+  status?: boolean;      // 是否上架，默认 true
+  p_size?: string;       // 尺寸，例如 "160,143,123"
+  p_finish?: string;     // 工艺，例如 "matte,glossy"
+  p_desc?: string;       // 产品描述
+  type_id: string;       // 关联单品资源 type_id
+}) => http.post(api.addProducts, data);
+
+

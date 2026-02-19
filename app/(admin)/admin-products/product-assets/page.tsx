@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getProductAssets } from "@/api/auth";
+import { getAssetsList } from "@/api/auth";
 
 type ProductAsset = {
   asset_id: number;
@@ -37,7 +37,7 @@ const ProductAssetsPage = () => {
         setLoading(true);
         setError(null);
 
-        const res = await getProductAssets({ page, page_size: PAGE_SIZE });
+        const res = await getAssetsList({ page, page_size: PAGE_SIZE });
         const data = res?.data;
         // 后端返回格式:
         // {

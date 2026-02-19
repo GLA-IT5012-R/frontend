@@ -2,6 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import {
   Table,
   TableBody,
   TableCaption,
@@ -11,8 +22,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { getProducts, updateProductStatus } from "@/api/auth";
+import { toast } from "sonner"
+
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
+
+import { getProducts, addProductApi, updateProductStatus, getAssetsList } from "@/api/auth";
 
 type Product = {
   id: number;
@@ -21,7 +38,17 @@ type Product = {
   price: string;
   status: boolean;
   p_size: string;
+  p_flex: string;
+  p_desc: string;
   p_finish: string;
+  asset?: Array<any>; // 新增字段
+};
+
+type Asset = {
+  asset_id: number;
+  type: string;
+  type_id: string;
+  // 其他字段...
 };
 
 const PAGE_SIZE = 8;
@@ -32,27 +59,36 @@ const ProductListPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [assets, setAssets] = useState<Asset[]>([]); // 模型资源列表
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  const [formData, setFormData] = useState({
+    name: "",
+    type: 1,
+    price: "",
+    status: true,
+    p_size: "",
+    p_finish: "",
+    assets_id: "",
+    p_flex: "",
+    p_desc: "",
+  });
+
+
+  // 获取产品列表
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
         setLoading(true);
         setError(null);
-
         const res: any = await getProducts({
           page,
           page_size: PAGE_SIZE,
           params: {},
         });
 
-        // 后端 products/list/ 返回格式：
-        // {
-        //   code: 200,
-        //   data: { total, page, page_size, list },
-        //   message: "ok"
-        // }
         if (res?.code === 200) {
           setProducts(res.data.list || []);
           setTotal(res.data.total || 0);
@@ -65,12 +101,50 @@ const ProductListPage = () => {
         setLoading(false);
       }
     };
-
     fetchProductsData();
   }, [page]);
 
+  // 获取模型资源列表
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const res: any = await getAssetsList({ page: 1, page_size: 100 });
+        if (res?.code === 200) {
+          setAssets(res.data.list || []);
+        }
+      } catch (e) {
+        console.error("Failed to fetch assets", e);
+      }
+    };
+    fetchAssets();
+  }, []);
+
+  const handleSubmit = async () => {
+    console.log(formData.assets_id)
+    if (!formData.assets_id) {
+      toast.warning(`Please select a model asset!`)
+      return;
+    }
+
+    try {
+      const res = await addProductApi(formData);
+
+      if (res?.data?.id) {
+        toast.success("Product created successfully!");
+        setOpen(false);
+        setPage(1); // 刷新第一页
+      } else {
+        toast.error("Failed to create product. Please try again.");
+      }
+    } catch (e: any) {
+      console.error("Create product failed", e);
+      const msg =
+        e?.response?.data?.error || e?.message || "Unknown error occurred";
+      toast.error(msg);
+    }
+  };
+
   const handleToggleStatus = async (id: number, checked: boolean) => {
-    // 先乐观更新 UI
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: checked } : p))
     );
@@ -78,7 +152,6 @@ const ProductListPage = () => {
     try {
       await updateProductStatus({ id: String(id), status: checked });
     } catch (e) {
-      // 失败则回滚
       setProducts((prev) =>
         prev.map((p) => (p.id === id ? { ...p, status: !checked } : p))
       );
@@ -86,17 +159,16 @@ const ProductListPage = () => {
     }
   };
 
-  const handlePrev = () => {
-    setPage((p) => Math.max(1, p - 1));
-  };
-
-  const handleNext = () => {
-    setPage((p) => Math.min(totalPages, p + 1));
-  };
-
   return (
     <div className="flex flex-col h-[80vh]">
-      <h1 className="mb-4 text-2xl font-semibold">Products</h1>
+      <h1 className="text-2xl font-semibold">Products</h1>
+
+      <button
+        className="bg-black text-white px-4 py-2 rounded"
+        onClick={() => setOpen(true)}
+      >
+        + Add Product
+      </button>
 
       {loading && <div>Loading...</div>}
       {error && <div className="text-red-500 text-sm">{error}</div>}
@@ -114,6 +186,7 @@ const ProductListPage = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Size</TableHead>
                 <TableHead>Finish</TableHead>
+                <TableHead>Asset</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -133,46 +206,133 @@ const ProductListPage = () => {
                   </TableCell>
                   <TableCell>{p.p_size}</TableCell>
                   <TableCell>{p.p_finish}</TableCell>
+                  <TableCell>{p.asset?.type || ""} [{p.asset?.type_id || ""}]</TableCell>
                 </TableRow>
               ))}
               {products.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center">
+                  <TableCell colSpan={8} className="text-center">
                     暂无数据
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={7}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Page {page} of {totalPages}, {PAGE_SIZE} items per page
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="border px-3 py-1 rounded disabled:opacity-50"
-                        onClick={handlePrev}
-                        disabled={page === 1}
-                      >
-                        Prev
-                      </button>
-                      <button
-                        className="border px-3 py-1 rounded disabled:opacity-50"
-                        onClick={handleNext}
-                        disabled={page === totalPages}
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableFooter>
           </Table>
         </div>
       )}
+
+      {/* 新增产品 Drawer */}
+      <Drawer open={open} onOpenChange={setOpen} direction="right">
+        <DrawerContent className="px-6 w-[50vw]">
+          <DrawerHeader>
+            <DrawerTitle>Add Product</DrawerTitle>
+          </DrawerHeader>
+
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label>Name</Label>
+              <Input
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
+
+            {/* <div>
+              <Label>Type</Label>
+              <Input
+                type="number"
+                disabled
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: Number(e.target.value) })
+                }
+              />
+            </div> */}
+
+            <div>
+              <Label>Model Asset</Label>
+              <NativeSelect
+                value={formData.assets_id}
+                onChange={(e) => {
+                  console.log(e.target.value)
+                  return setFormData({ ...formData, assets_id: e.target.value })
+                }
+                }
+              >
+                <NativeSelectOption value="">
+                  Select a model asset
+                </NativeSelectOption>
+                {assets.map((a) => (
+                  <NativeSelectOption key={a.asset_id} value={a.asset_id}>
+                    {a.type}[{a.type_id}]
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+
+            <div>
+              <Label>Price(£)</Label>
+              <Input
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <Label>Size</Label>
+              <Input
+                value={formData.p_size}
+                onChange={(e) =>
+                  setFormData({ ...formData, p_size: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <Label>Finish</Label>
+              <Input
+                value={formData.p_finish}
+                onChange={(e) =>
+                  setFormData({ ...formData, p_finish: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <Label>Flex</Label>
+              <Input
+                value={formData.p_flex || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, p_flex: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <Label>Description</Label>
+              <textarea
+                className="w-full border rounded px-2 py-1"
+                rows={4}
+                value={formData.p_desc || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, p_desc: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <DrawerFooter className="mt-6 flex gap-2">
+            <Button onClick={handleSubmit}>Submit</Button>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
