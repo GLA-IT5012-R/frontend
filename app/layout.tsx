@@ -33,7 +33,6 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${bowlby.variable} ${dmMono.variable} antialiased font-mono font-medium text-zinc-800`}
@@ -41,9 +40,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             {/* <CartProvider> */}
-              <main className="relative">
-                {children}
-              </main>
+            <main className="relative">
+              {children}
+            </main>
             {/* </CartProvider> */}
           </AuthProvider>
           <Toaster richColors={true} />

@@ -122,7 +122,7 @@ export const homepage: Homepage = {
         alt: "Skater performing trick"
       },
       background_image: {
-        url: "/images/backgrounds/paint-background.png",
+        url: "/paint-background.png",
         alt: "Paint background"
       },
       variation: 'default'

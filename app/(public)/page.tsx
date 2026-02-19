@@ -18,26 +18,26 @@ export default async function Page() {
             return <Hero key={index} slice={slice} />;
           case "product_grid":
             return <ProductGrid key={index} slice={slice} />;
-          case "text_and_image":
-            return <TextAndImage key={index} slice={slice} index={index} />;
+          // case "text_and_image":
+          //   return <TextAndImage key={index} slice={slice} index={index} />;
           // case "team_grid":
           //   return <TeamGrid key={index} slice={slice} />;
           // case "video_block":
           //   return <VideoBlock key={index} slice={slice} />;
           // case "about":
           //   return <About key={index} slice={slice} />;
-          case "text_and_image_bundle":
-            return (
-              <div key={index}>
-                {slice.slices.map((bundledSlice, bundleIndex) => (
-                  <TextAndImage
-                    key={bundleIndex}
-                    slice={bundledSlice}
-                    index={bundleIndex}
-                  />
-                ))}
-              </div>
-            );
+          // case "text_and_image_bundle":
+          //   return (
+          //     <div key={index}>
+          //       {slice.slices.map((bundledSlice, bundleIndex) => (
+          //         <TextAndImage
+          //           key={bundleIndex}
+          //           slice={bundledSlice}
+          //           index={bundleIndex}
+          //         />
+          //       ))}
+          //     </div>
+          //   );
           default:
             return null;
         }

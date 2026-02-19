@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
-import { addCustomDesignApi } from "@/api/auth";
+import { addCustomDesignApi, addOrderApi } from "@/api/auth";
 import { toast } from "sonner"
 
 const SCRIBBLE_COLORS = [
@@ -88,14 +88,63 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
   // --------------------------
   // 下单 / 支付逻辑
   // --------------------------
-  const onPay = (formData: any) => {
+  const onPay = async (formData: any) => {
     if (!formData) return;
-    console.log("Place order:", {
-      productId: data.id,
-      ...formData
-    });
-    alert(`Order placed for: ${data.name} (Qty: ${formData.quantity})`);
-  }
+
+    try {
+      // 1️⃣ 先创建定制
+      const designRes = await addCustomDesignApi({
+        product_id: data.id,
+        user_id: 10001, // TODO: 替换真实用户
+        p_size: formData.p_size,
+        p_finish: formData.p_finish,
+        p_flex: formData.p_flex,
+        p_textures: formData.p_textures || [],
+      });
+
+      if (designRes.code !== 200) {
+        toast.error("Failed to create design");
+        return;
+      }
+
+      const designId = designRes.data.id;
+      const productId = designRes.data.product_id;
+
+      // 2️⃣ 计算总价
+      const quantity = formData.quantity || 1;
+      const unitPrice = data.price; // 假设 product 里有 price
+      const totalPrice = quantity * unitPrice;
+
+      // 3️⃣ 调用订单接口
+      const orderRes = await addOrderApi({
+        user_id: 10001,
+        total_price: totalPrice,
+        order_status: "Pending",
+        address: "London UK", // TODO: 换成用户地址
+        email: "test@email.com", // TODO: 用户邮箱
+        list: [
+          {
+            design_id: designId,
+            product_id: productId,
+            quantity,
+            unit_price: unitPrice,
+          },
+        ],
+      });
+
+      if (orderRes.code === 200) {
+        toast.success("Order created successfully!");
+        setOpen(false);
+      } else {
+        toast.error("Order creation failed");
+      }
+
+    } catch (err) {
+      console.error("Order failed:", err);
+      toast.error("Something went wrong");
+    }
+  };
+
 
   // --------------------------
   // 抽屉关闭时重置表单
@@ -141,7 +190,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
               Customize
             </Link>
           </DrawerTrigger>
-          <DrawerContent>
+          <DrawerContent className="w-[90vw]" >
             <DrawerHeader>
               <DrawerTitle>Customizer Modal</DrawerTitle>
               <DrawerDescription>Configure your snowboard!</DrawerDescription>

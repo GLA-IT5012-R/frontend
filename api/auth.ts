@@ -1,6 +1,19 @@
 import http from '@/utils/axios';
 import {api} from './api';
 
+export const authApi = {
+  // 请求验证码
+  requestCode: async (email: string) => {
+    return http.post(api.requestCode, { email });
+  },
+
+  // 验证验证码并登录 / 注册
+  loginOrRegister: async (email: string, code: string) => {
+    return http.post(api.loginOrRegister, { email, code });
+  },
+
+};
+
 // 登录
 export const loginApi = (data: { username: string; password: string }) =>
   http.post(api.login, data)
@@ -104,3 +117,23 @@ export const addProductApi = (data: {
 }) => http.post(api.addProducts, data);
 
 
+// add order
+// 单个订单项
+export interface OrderItemPayload {
+  design_id: number;
+  product_id?: number; // 可选
+  quantity: number;
+  unit_price: number;
+}
+
+// 整个订单
+export interface AddOrderPayload {
+  user_id: number;
+  total_price: number;
+  order_status?: string;
+  address?: string;
+  email?: string;
+  list: OrderItemPayload[];
+}
+export const addOrderApi = (data: AddOrderPayload) =>
+  http.post(api.addOrder, data);

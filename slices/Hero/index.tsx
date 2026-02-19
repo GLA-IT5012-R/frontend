@@ -29,29 +29,22 @@ export type HeroProps = {
  * Component for "Hero" Slices.
  */
 const Hero = ({ slice }: HeroProps): JSX.Element => {
-  // const deckTextureURL =
-  //   slice.skateboard_deck_texture?.url || DEFAULT_DECK_TEXTURE;
-  // const wheelTextureURL =
-  //   slice.skateboard_wheel_texture?.url || DEFAULT_WHEEL_TEXTURE;
-  // const truckColor =
-  //   slice.skateboard_truck_color || DEFAULT_TRUCK_COLOR;
-  // const boltColor = slice.skateboard_bolt_color || DEFAULT_BOLT_COLOR;
 
 
-  const { isSignedIn } = useUser();
+  // const { isSignedIn } = useUser();
   const router = useRouter();
 
   const handleBuild = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (isSignedIn) {
-      router.push(slice.button.url);
-    } else {
-      // 👉 未登录的处理
-      alert("Please sign in first");
-      // 或打开你自己的 Login Modal
-      // openLoginModal();
-    }
+    // if (isSignedIn) {
+    //   router.push(slice.button.url);
+    // } else {
+    //   // 👉 未登录的处理
+    //   alert("Please sign in first");
+    //   // 或打开你自己的 Login Modal
+    //   // openLoginModal();
+    // }
   };
   return (
     <Bounded

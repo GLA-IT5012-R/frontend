@@ -1,19 +1,23 @@
 'use client';
-
 import { createContext, useContext, useState, useEffect } from 'react';
-import { loginApi } from '@/api/auth';
 import { useRouter } from 'next/navigation';
+import { useUser } from "@clerk/nextjs";
+import { loginApi, authApi, syncUserApi } from '@/api/auth';
 
 type User = {
-  id: number;
-  username: string;
-  role: 'user' | 'admin';
+  id: string;
+  email: string;
+  name: string;
+  addresses?: any[];
+  role?: 'user' | 'admin';
 };
 
 type AuthContextType = {
   user: User | null;
   token: string | null;
-  login: (data: { username: string; password: string }) => Promise<void>;
+  loginAdmin: (data: { username: string; password: string }) => Promise<void>;
+  loginUser: (email: string, code: string) => Promise<void>;
+  loginUserFromData: (userData: User) => void;
   logout: () => void;
   loading: boolean;
 };
@@ -25,38 +29,96 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [clerkSynced, setClerkSynced] = useState(false); // 避免重复调用 Clerk 同步
+  const { user: clerkUser, isSignedIn } = useUser();
 
-  // 登录方法
-  const login = async (data: { username: string; password: string }) => {
-    const res = await loginApi(data); // 调用后端 /login/
-    // 假设返回 { access, refresh, user }
+  /** 
+   * Clerk 用户同步到后端
+   */
+  const syncClerkUser = async (clerkUser: any) => {
+    if (!clerkUser) return;
+
+    const syncedId = localStorage.getItem("clerkSyncedId");
+    if (syncedId === clerkUser.id) return; // 已经同步过，直接返回
+
+    const email = clerkUser.emailAddresses[0]?.emailAddress;
+    const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim();
+    const clerk_id = clerkUser.id;
+
+    try {
+      const res = await syncUserApi({ id: clerk_id, email, name });
+      const userInfo = res.data.data;
+      setUser(userInfo);
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      localStorage.setItem("clerkSyncedId", clerk_id); // 标记同步过
+      setClerkSynced(true);
+    } catch (err) {
+      console.error("Sync clerk user failed:", err);
+    }
+  };
+
+
+  /**
+   * 后台管理员登录
+   */
+  const loginAdmin = async (data: { username: string; password: string }) => {
+    const res = await loginApi(data);
     localStorage.setItem('Token', res.access);
     localStorage.setItem('RefreshToken', res.refresh);
+    localStorage.setItem('User', JSON.stringify(res.user));
     setToken(res.access);
     setUser(res.user);
-    router.replace('/dashboard'); // 登录成功跳后台首页
+    router.replace('/dashboard');
   };
 
-  // 登出方法
+  /**
+   * 前台邮箱验证码登录/注册
+   */
+  const loginUser = async (email: string, code: string) => {
+    const res = await authApi.loginOrRegister(email, code);
+    const userData: User = res.data?.data;
+    if (!userData) throw new Error('未返回用户信息');
+    setUser(userData);
+    localStorage.setItem('userInfo', JSON.stringify(userData));
+  };
+
+  const loginUserFromData = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('userInfo', JSON.stringify(userData));
+  };
+
   const logout = () => {
-    localStorage.clear();
-    setToken(null);
+    localStorage.removeItem('userInfo');
     setUser(null);
-    router.replace('/login');
+    router.replace('/sign-in');
   };
 
-  // 页面刷新/首次加载从 localStorage 读取 token
+  /** 
+   * Clerk 登录变化监听
+   */
   useEffect(() => {
-    const t = localStorage.getItem('Token');
-    const r = localStorage.getItem('RefreshToken');
-    const u = localStorage.getItem('User');
-    if (t) setToken(t);
-    if (u) setUser(u ? JSON.parse(u) : null);
+    if (isSignedIn && clerkUser) {
+      syncClerkUser(clerkUser);
+    }
+  }, [clerkUser, isSignedIn]);
+
+  /**
+   * 页面刷新/首次加载，从 localStorage 恢复用户信息
+   */
+  useEffect(() => {
+    const u = localStorage.getItem('userInfo');
+    if (u) {
+      try {
+        setUser(JSON.parse(u));
+      } catch {
+        localStorage.removeItem('userInfo');
+      }
+    }
     setLoading(false);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, loginAdmin, loginUser, loginUserFromData, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

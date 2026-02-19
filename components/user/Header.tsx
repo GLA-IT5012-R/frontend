@@ -1,10 +1,11 @@
 'use client';
 // React and Clerk imports
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SignedIn, SignedOut, SignIn, SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { syncUserApi } from "@/api/auth";
-// UI Components
+import { Logo } from '../Logo';
+import { LogOutIcon, ShoppingCart } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,46 +14,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import CustomModal from "@/components/HeroModal";
-import { Logo } from '../Logo';
-import { LogOutIcon, ShoppingCart } from 'lucide-react';
 
-const menuItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Products', href: '/products' },
-    // { label: 'About', href: '/about' },
-    // { label: 'Contact', href: '/contact' },
-    // { label: 'Blog', href: '/blog' },
-];
 
 export function Header() {
-
-    const { user, isSignedIn } = useUser();
+    const { user } = useAuth();
+    
     const [open, setOpen] = useState(false); // For SignIn modal
     const [isMenuOpen, setIsMenuOpen] = useState(false); // For mobile menu toggle
+    
+    const firstName = user?.username || "there";
 
-    // Sync user info to backend when user signs in
-    const [synced, setSynced] = useState(false);
+     const menuItems = [
+        { label: 'Home', href: '/' },
+        { label: 'Products', href: '/products' },
+    ];
 
-    useEffect(() => {
-        if (user && isSignedIn && !synced) {
-            if (user && isSignedIn) {
-                const email = user.emailAddresses[0]?.emailAddress;
-                const name = `${user.firstName || ""} ${user.lastName || ""}`.trim();
-                const clerk_id = user.id; // Clerk 的唯一 ID
-
-                syncUserApi({ id: clerk_id, email, name })  // 注意这里传 id
-                    .then((res) => console.log("User synced:", res.data))
-                    .catch((err) => console.error("Sync user failed:", err));
-            }
-        }
-    }, [user, isSignedIn, synced]);
-
-
-    const firstName = user?.firstName || user?.username || "there";
-
-    useEffect(() => {
-        console.log('XXXXXXXX: ', process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-    });
+    /***** end clerk */
 
     return (
         <header id="header" className="w-full z-9 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
@@ -62,7 +39,7 @@ export function Header() {
             </Link>
             {/* Menu */}
             <nav
-                className="hidden lg:flex gap-8"
+                className="hidden sm:flex gap-8"
                 aria-label="Menu"
             >
                 {menuItems.map((item) => (
@@ -79,7 +56,52 @@ export function Header() {
             {/* Right Icons */}
             <div className="flex items-center gap-2 justify-self-end">
                 {/* Desktop Auth Buttons */}
+                {/* {user ? (
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <span className='cursor-pointer'>Hi,&nbsp;{user.username}</span>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem>
+                                        <Link
+                                            href="/account"
+                                            title="View Account"
+                                        >
+                                            View Account
+                                        </Link>
 
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem variant="destructive" onClick={logout}>
+                                        <LogOutIcon />
+                                        Sign Out
+
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Link
+                            href="/cart"
+                            className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 hover:brightness-110"
+                        >
+                            <ShoppingCart size={20} strokeWidth={2} />
+                        </Link>
+
+                    </>
+                ) : (
+                    <Link
+                        href="/signin"
+                        className="hidden sm:inline-flex button-cutout group items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-3 px-1 text-lg fl-py-2.5/3 from-brand-blue to-brand-lime text-black mr-4"
+                    >
+                        Login
+                    </Link>
+
+                )} */}
+
+                {/* Clerk/nextjs */}
                 <SignedIn>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -108,7 +130,6 @@ export function Header() {
                             </SignOutButton>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    {/* <CartButton /> */}
                     <Link
                         href="/cart"
                         className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 hover:brightness-110"
@@ -121,20 +142,15 @@ export function Header() {
                 <SignedOut>
                     <Link
                         href="/sign-in"
-                        className="hidden lg:inline-flex button-cutout group items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-3 px-1 text-lg fl-py-2.5/3 from-brand-blue to-brand-lime text-black mr-4"
+                        className="hidden sm:inline-flex button-cutout group items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-3 px-1 text-lg fl-py-2.5/3 from-brand-blue to-brand-lime text-black mr-4"
                     >
                         Login
                     </Link>
                 </SignedOut>
-                {/* <SignedIn>
-                    <SignOutButton>
-                        <button className="hidden lg:inline-flex button-cutout group items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-3 px-1 text-md fl-py-0.5/1 from-brand-blue to-brand-lime text-black mr-2">
-                            Logout
-                        </button>
-                    </SignOutButton>
-                </SignedIn> */}
 
-                <div className="lg:hidden flex items-center gap-4">
+
+
+                <div className="sm:hidden flex items-center gap-4">
                     {/* <CartButton /> */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -145,10 +161,6 @@ export function Header() {
                         <span className={`block h-1 w-7 bg-brand-purple transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
                         <span className={`block h-1 w-7 bg-brand-purple transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`}></span>
                     </button>
-                </div>
-
-                <div className="hidden lg:block">
-                    {/* <CartButton /> */}
                 </div>
 
                 <CustomModal
