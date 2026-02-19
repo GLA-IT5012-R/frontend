@@ -28,6 +28,7 @@ export const getTestAuth = () => http.get(api.testAuth);
 export const syncUserApi = (data: { id: string; email: string; name: string }) =>
   http.post(api.syncUser, data);
 
+
 // 获取产品列表（支持分页）
 export const getProducts = (options?: {
   page?: number;

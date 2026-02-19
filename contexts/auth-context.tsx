@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const res = await syncUserApi({ id: clerk_id, email, name });
-      const userInfo = res.data.data;
+      const userInfo = res.data;
       setUser(userInfo);
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
       localStorage.setItem("clerkSyncedId", clerk_id); // 标记同步过
@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('clerkSyncedId');
     setUser(null);
     router.replace('/sign-in');
   };

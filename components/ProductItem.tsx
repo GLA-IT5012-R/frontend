@@ -18,6 +18,7 @@ import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
 import { addCustomDesignApi, addOrderApi } from "@/api/auth";
 import { toast } from "sonner"
+import { useAuth } from '@/contexts/auth-context';
 
 const SCRIBBLE_COLORS = [
   '#f97316', // orange
@@ -35,6 +36,7 @@ const getDefault = (str?: string) => {
 }
 
 export function ProductItem({ idx, data }: any): React.ReactElement | null {
+  const { user } = useAuth(); 
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<any>(null); // 保存 CustomizerSelection 的 formData
 
@@ -121,7 +123,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
         total_price: totalPrice,
         order_status: "Pending",
         address: "London UK", // TODO: 换成用户地址
-        email: "test@email.com", // TODO: 用户邮箱
+        email: user?.email || "",
         list: [
           {
             design_id: designId,
