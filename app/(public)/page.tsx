@@ -3,8 +3,8 @@ import { homepage, Slice, TextAndImageSlice } from "@/data/homepage";
 import Hero from "@/slices/Hero";
 import ProductGrid from "@/slices/ProductGrid";
 import TextAndImage from "@/slices/TextAndImage";
+import VideoBlock from "@/slices/VideoBlock";
 // import TeamGrid from "@/slices/TeamGrid";
-// import VideoBlock from "@/slices/VideoBlock";
 // import About from "@/slices/About";
 
 export default async function Page() {
@@ -22,8 +22,8 @@ export default async function Page() {
           //   return <TextAndImage key={index} slice={slice} index={index} />;
           // case "team_grid":
           //   return <TeamGrid key={index} slice={slice} />;
-          // case "video_block":
-          //   return <VideoBlock key={index} slice={slice} />;
+          case "video_block":
+            return <VideoBlock key={index} slice={slice} />;
           // case "about":
           //   return <About key={index} slice={slice} />;
           // case "text_and_image_bundle":

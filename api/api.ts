@@ -5,6 +5,7 @@ export const api: any = {
     refreshToken: '/token/refresh/',
     testAuth: '/testAuth/',
     syncUser: '/sync-user/',
+    saveAddr:'/save-address/',
     getProducts: '/products/list/',
     addProducts: '/products/add/',
     getAssetsList: '/products/assets/',
@@ -13,9 +14,10 @@ export const api: any = {
     upload: '/products/upload/',
     addCustomDesign: '/products/add-design/',
 
-    addProduct: '/products/add-product',
+    addProduct: '/products/add-product/',
     // 订单
-    addOrder: '/orders/add',
+    addOrder: '/orders/add/',
+    userOrders:'orders/user/'
     // 管理端接口
 
 };

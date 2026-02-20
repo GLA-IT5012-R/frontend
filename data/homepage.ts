@@ -19,17 +19,12 @@ export type HeroSlice = {
   heading: string;
   body: RichText;
   button: Link;
-  skateboard_deck_texture: Image | null;
-  skateboard_wheel_texture: Image | null;
-  skateboard_truck_color: string | null;
-  skateboard_bolt_color: string | null;
 };
 
 export type ProductGridSlice = {
   slice_type: 'product_grid';
   heading: string;
   body: RichText;
-  product_ids: string[]; // IDs from skateboards data
 };
 
 export type TeamGridSlice = {
@@ -74,8 +69,8 @@ export type Homepage = {
 };
 
 export const homepage: Homepage = {
-  meta_title: "Suburbia Skate - Build Your Custom Skateboard",
-  meta_description: "Not just a board, your board. Design a skateboard that's as real as the places you take it.",
+  meta_title: "Snow craft - Build Your Custom Snowboard",
+  meta_description: "Not just a board, your board. Design a snowboard that's as real as the places you take it.",
   slices: [
     {
       slice_type: 'hero',
@@ -84,19 +79,9 @@ export const homepage: Homepage = {
         { type: 'paragraph', text: "Not just a board, your board. Design a board that's as real as the places you take it.", emphasis: "your board" }
       ],
       button: {
-        url: '/build',
+        url: '#',
         text: 'Build Your Board'
       },
-      skateboard_deck_texture: {
-        url: "/images/hero/green-and-navy.webp",
-        alt: "Green and navy skateboard deck"
-      },
-      skateboard_wheel_texture: {
-        url: "/images/hero/wheel-green.png",
-        alt: "Green wheel"
-      },
-      skateboard_truck_color: null,
-      skateboard_bolt_color: null,
     },
     {
       slice_type: 'product_grid',
@@ -104,7 +89,6 @@ export const homepage: Homepage = {
       body: [
         { type: 'paragraph', text: "Check out our newest skateboard designs" }
       ],
-      product_ids: ['oni-mask', 'pink-drop', 'thank-you', 'yellow-black']
     },
     {
       slice_type: 'text_and_image',
@@ -196,7 +180,7 @@ export const homepage: Homepage = {
     },
     {
       slice_type: 'video_block',
-      youtube_video_id: '44I29krtxaw'
+      youtube_video_id: 'BqDWZ_z4GQw'
     },
     {
       slice_type: 'about',

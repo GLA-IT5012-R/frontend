@@ -36,9 +36,10 @@ const getDefault = (str?: string) => {
 }
 
 export function ProductItem({ idx, data }: any): React.ReactElement | null {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<any>(null); // 保存 CustomizerSelection 的 formData
+  const userid = JSON.parse(localStorage.getItem('userInfo'))?.id;
 
   const scribbleColor = SCRIBBLE_COLORS[idx % SCRIBBLE_COLORS.length];
 
@@ -47,7 +48,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
     p_size: getDefault(data.p_size),
     p_finish: getDefault(data.p_finish),
     p_flex: getDefault(data.p_flex),
-    p_texture: data.p_textures[data.asset.type_id]?.[0] || null,
+    p_textures: data.p_textures[data.asset.type_id]?.[0] || null,
     quantity: 1,
   });
 
@@ -69,12 +70,11 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
       ...formData
     });
     // alert(`Added to cart: ${data.name} (Qty: ${formData.quantity})`);
-
     toast.success(`Added to cart: ${data.name} (Qty: ${formData.quantity})`)
     // submit formData to backend
     addCustomDesignApi({
       product_id: data.id,
-      user_id: 10001, // TODO: replace with actual user ID
+      user_id: userid, // TODO: replace with actual user ID
       p_size: formData.p_size,
       p_finish: formData.p_finish,
       p_flex: formData.p_flex,
@@ -97,7 +97,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
       // 1️⃣ 先创建定制
       const designRes = await addCustomDesignApi({
         product_id: data.id,
-        user_id: 10001, // TODO: 替换真实用户
+        user_id: userid, // TODO: replace with actual user ID
         p_size: formData.p_size,
         p_finish: formData.p_finish,
         p_flex: formData.p_flex,
@@ -119,7 +119,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
 
       // 3️⃣ 调用订单接口
       const orderRes = await addOrderApi({
-        user_id: 10001,
+        user_id: userid, // TODO: replace with actual user ID
         total_price: totalPrice,
         order_status: "Pending",
         address: "London UK", // TODO: 换成用户地址

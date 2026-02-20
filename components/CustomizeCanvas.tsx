@@ -119,7 +119,7 @@ function createTextTexture(text: string): THREE.CanvasTexture | null {
     ctx.fillStyle = 'rgba(0,0,0,0.01)'
     ctx.fillRect(0, 0, size, size)
     ctx.fillStyle = '#000'
-    ctx.font = ' 120px system-ui, sans-serif'
+    ctx.font = ' 30px system-ui, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(text.trim(), size / 2, size / 2)
@@ -237,7 +237,7 @@ export function ProductModel({ textureUrls, typeId, finish = 'matte', customText
     )
 
     return (
-        <group position={[0, 0.46, 0]} rotation={[Math.PI / 2.3, 0, 0]}>
+        <group position={[0, 0.473, 0]} rotation={[Math.PI / 2.3, 0, 0]}>
             {groupNodes.map((meshNode) => {
                 if (!meshNode) return null
 

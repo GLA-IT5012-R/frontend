@@ -5,10 +5,13 @@ import { useUser } from "@clerk/nextjs";
 import { loginApi, authApi, syncUserApi } from '@/api/auth';
 
 type User = {
+  clerk_id: string;
   id: string;
   email: string;
-  name: string;
-  addresses?: any[];
+  username: string;
+  address: string;
+  created_at: string;
+  updated_at: string;
   role?: 'user' | 'admin';
 };
 
@@ -39,19 +42,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!clerkUser) return;
 
     const syncedId = localStorage.getItem("clerkSyncedId");
-    if (syncedId === clerkUser.id) return; // 已经同步过，直接返回
+    if (syncedId === clerkUser.id) return;
 
-    const email = clerkUser.emailAddresses[0]?.emailAddress;
+    const email = clerkUser.emailAddresses?.[0]?.emailAddress;
     const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim();
     const clerk_id = clerkUser.id;
 
+    if (!email) return;
+
     try {
-      const res = await syncUserApi({ id: clerk_id, email, name });
-      const userInfo = res.data;
-      setUser(userInfo);
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
-      localStorage.setItem("clerkSyncedId", clerk_id); // 标记同步过
-      setClerkSynced(true);
+      const res = await syncUserApi({
+        id: clerk_id,
+        email,
+        name,
+      });
+
+      if (res.code === 200) {
+        const userInfo = res.data;
+
+        setUser(userInfo);
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        localStorage.setItem("clerkSyncedId", clerk_id);
+        setClerkSynced(true);
+      }
     } catch (err) {
       console.error("Sync clerk user failed:", err);
     }

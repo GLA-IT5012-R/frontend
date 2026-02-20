@@ -1,7 +1,7 @@
 'use client';
 // React and Clerk imports
 import React, { useState } from 'react';
-import { SignedIn, SignedOut, SignIn, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignIn, SignOutButton, useClerk, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { Logo } from '../Logo';
 import { LogOutIcon, ShoppingCart } from 'lucide-react';
@@ -17,16 +17,18 @@ import CustomModal from "@/components/HeroModal";
 
 
 export function Header() {
-    const { user } = useAuth();
-    
+    const { user,logout } = useAuth();
+    const { signOut } = useClerk();
     const [open, setOpen] = useState(false); // For SignIn modal
     const [isMenuOpen, setIsMenuOpen] = useState(false); // For mobile menu toggle
-    
+
     const firstName = user?.username || "there";
 
-     const menuItems = [
+    const menuItems = [
         { label: 'Home', href: '/' },
         { label: 'Products', href: '/products' },
+        { label: 'About', href: '/about' },
+
     ];
 
     /***** end clerk */
@@ -46,7 +48,7 @@ export function Header() {
                     <a
                         key={item.label}
                         href={item.href}
-                        className="text-gray-700 hover:text-blue-600 transition"
+                        className="text-gray-700 hover:text-amber-700 transition text-lg"
                     >
                         {item.label}
                     </a>
@@ -105,7 +107,7 @@ export function Header() {
                 <SignedIn>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <span className='cursor-pointer'>Hi,&nbsp;{firstName}</span>
+                            <span className='cursor-pointer text-lg'>Hi,&nbsp;{firstName}</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuGroup>
@@ -118,16 +120,30 @@ export function Header() {
                                     </Link>
 
                                 </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <SignOutButton>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem variant="destructive">
-                                        <LogOutIcon />
-                                        Sign Out
+                                <DropdownMenuItem>
+                                    <Link
+                                        href="/account/order"
+                                        title="My Orders"
+                                    >
+                                        My Orders
+                                    </Link>
 
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                            </SignOutButton>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            {/* <SignOutButton> */}
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem variant="destructive"
+                                    onClick={async () => {
+                                        await signOut();   // 退出 Clerk
+                                        logout();          // 清理你自己的状态
+                                    }}
+                                >
+                                    <LogOutIcon />
+                                    Sign Out
+
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            {/* </SignOutButton> */}
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Link

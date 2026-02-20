@@ -138,3 +138,14 @@ export interface AddOrderPayload {
 }
 export const addOrderApi = (data: AddOrderPayload) =>
   http.post(api.addOrder, data);
+
+// 获取订单列表
+export const getUserOrdersApi = (userId: number) =>
+  http.get(`${api.userOrders}${userId}/`);
+
+// add adress
+export const saveAddressApi = (clerkId: string, address: string) =>
+  http.post(api.saveAddr, {
+    clerk_id: clerkId,
+    address,
+  });

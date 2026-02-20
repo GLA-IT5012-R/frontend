@@ -13,11 +13,6 @@ import { TallLogo } from "./TallLogo";
 import { HeroSlice } from "@/data/homepage";
 import { Leva } from "leva";
 
-const DEFAULT_DECK_TEXTURE = "/skateboard/Deck.webp";
-const DEFAULT_WHEEL_TEXTURE = "/skateboard/SkateWheel1.png";
-const DEFAULT_TRUCK_COLOR = "#6F6E6A";
-const DEFAULT_BOLT_COLOR = "#6F6E6A";
-
 /**
  * Props for `Hero`.
  */
@@ -36,15 +31,6 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
 
   const handleBuild = (e: React.MouseEvent) => {
     e.preventDefault();
-
-    // if (isSignedIn) {
-    //   router.push(slice.button.url);
-    // } else {
-    //   // 👉 未登录的处理
-    //   alert("Please sign in first");
-    //   // 或打开你自己的 Login Modal
-    //   // openLoginModal();
-    // }
   };
   return (
     <Bounded
@@ -77,7 +63,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
               return <p key={index}>{paragraph.text}</p>;
             })}
           </div>
-          <Link
+          {/* <Link
             href={slice.button.url}
             // href={slice.button.url}
             onClick={handleBuild}
@@ -88,7 +74,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
             </div>
             <div className="w-px self-stretch bg-black/25" />
             {slice.button.text}
-          </Link>
+          </Link> */}
         </div>
       </div>
       {/* 3d-模型 */}
