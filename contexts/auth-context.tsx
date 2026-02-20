@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from "@clerk/nextjs";
-import { loginApi, authApi, syncUserApi } from '@/api/auth';
+import { adminloginApi, authApi, syncUserApi } from '@/api/auth';
 
 type User = {
   clerk_id: string;
@@ -72,16 +72,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   /**
-   * 后台管理员登录
-   */
+  * 后台管理员登录
+  * @param data 登录信息 { username, password }
+  * 调用 adminloginApi 获取 token 和用户信息，并保存到 localStorage 和 context
+  */
   const loginAdmin = async (data: { username: string; password: string }) => {
-    const res = await loginApi(data);
-    localStorage.setItem('Token', res.access);
-    localStorage.setItem('RefreshToken', res.refresh);
-    localStorage.setItem('User', JSON.stringify(res.user));
-    setToken(res.access);
-    setUser(res.user);
-    router.replace('/dashboard');
+    try {
+      const res = await adminloginApi(data);
+
+      // 保存 token 到 localStorage
+      localStorage.setItem('Token', res.access);
+      localStorage.setItem('RefreshToken', res.refresh);
+
+      // 保存用户信息到 localStorage
+      localStorage.setItem('User', JSON.stringify(res.user));
+
+      // 更新 context
+      setToken(res.access);
+      setUser(res.user);
+
+      // 跳转到后台首页
+      router.replace('/dashboard');
+    } catch (err) {
+      console.error('Admin login failed:', err);
+      // 可加 toast 提示
+    }
+  };
+
+  /**
+   * 后台管理员登出
+   * 清理本地存储，并跳转回后台登录页
+   */
+  const logoutAdmin = () => {
+    // 清理 token 和用户信息
+    localStorage.removeItem('Token');
+    localStorage.removeItem('RefreshToken');
+    localStorage.removeItem('User');
+
+    setToken(null);
+    setUser(null);
+
+    // 跳转到后台登录页
+    router.replace('/adminlogin');
   };
 
   /**
@@ -132,7 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loginAdmin, loginUser, loginUserFromData, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, loginAdmin, logoutAdmin, loginUser, loginUserFromData, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

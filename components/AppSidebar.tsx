@@ -64,7 +64,7 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { logout } = useAuth();
+  const { logoutAdmin } = useAuth();
   const isActive = (url: string) => {
     if (!url || url === "#") return false
     return pathname.startsWith(url)
@@ -148,7 +148,7 @@ export function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={logoutAdmin}>
                   <span className="cursor-pointer text-red-400">Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

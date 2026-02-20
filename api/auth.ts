@@ -15,8 +15,8 @@ export const authApi = {
 };
 
 // 登录
-export const loginApi = (data: { username: string; password: string }) =>
-  http.post(api.login, data)
+export const adminloginApi = (data: { username: string; password: string }) =>
+  http.post(api.adminlogin, data)
 
 // 刷新 token
 export const refreshTokenApi = (data: { refresh: string }) =>

@@ -92,6 +92,15 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
   // --------------------------
   const onPay = async (formData: any) => {
     if (!formData) return;
+    const userAddress = user?.address?.trim() || "";
+
+    // ✅ 地址校验
+    if (!userAddress) {
+      toast.error("Please add your shipping address in your profile before placing an order.");
+      return; // 终止下单
+    }
+
+
 
     try {
       // 1️⃣ 先创建定制
@@ -122,7 +131,7 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
         user_id: userid, // TODO: replace with actual user ID
         total_price: totalPrice,
         order_status: "Pending",
-        address: "London UK", // TODO: 换成用户地址
+        address: userAddress, // TODO: 换成用户地址
         email: user?.email || "",
         list: [
           {
@@ -185,13 +194,21 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
           open={open}
           onOpenChange={(val) => setOpen(val)}>
           <DrawerTrigger asChild>
-            <Link
-              href={'#'}
-              className="button-cutout inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom px-4 text-base fl-py-2/2.5 from-brand-blue to-brand-lime text-black"
+            <button
+              disabled={!data.status} // status false 就禁用按钮
+              className={`
+                inline-flex items-center font-bold px-4 text-base fl-py-2/2.5
+                transition-[filter,background-position] duration-300
+                rounded-md text-black
+                ${data.status
+                            ? 'button-cutout bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] hover:bg-bottom from-brand-blue to-brand-lime'
+                            : 'button-cutout bg-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-300'}
+              `}
             >
-              Customize
-            </Link>
+              {data.status ? 'Customize' : 'Sold Out'}
+            </button>
           </DrawerTrigger>
+
           <DrawerContent className="w-[90vw]" >
             <DrawerHeader>
               <DrawerTitle>Customizer Modal</DrawerTitle>

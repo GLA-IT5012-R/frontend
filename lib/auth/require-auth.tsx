@@ -11,7 +11,7 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace('/login');
+      router.replace('/adminlogin');
     }
   }, [token, loading]);
 

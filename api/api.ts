@@ -1,7 +1,7 @@
 export const api: any = {
     loginOrRegister: '/verify-code/',  // 验证邮箱验证码并登录/注册
     requestCode: '/request-code/',     // 请求邮箱验证码
-    login: '/login/',
+    adminlogin: '/login/',
     refreshToken: '/token/refresh/',
     testAuth: '/testAuth/',
     syncUser: '/sync-user/',
