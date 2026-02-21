@@ -84,9 +84,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('Token', res.access);
       localStorage.setItem('RefreshToken', res.refresh);
 
-      // 保存用户信息到 localStorage
-      localStorage.setItem('User', JSON.stringify(res.user));
-
       // 更新 context
       setToken(res.access);
       setUser(res.user);
@@ -152,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * 页面刷新/首次加载，从 localStorage 恢复用户信息
    */
   useEffect(() => {
+    // 尝试恢复前台用户
     const u = localStorage.getItem('userInfo');
     if (u) {
       try {
@@ -160,6 +158,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('userInfo');
       }
     }
+
+    // 尝试恢复管理员
+    const t = localStorage.getItem('Token');
+    if (t && !user) {
+      // 简单处理：只要有 access token 就认为管理员已登录
+      setToken(t);
+      setUser({ username: 'admin', role: 'admin' } as any);
+      // 注意这里 user 结构可以保持简单
+    }
+
     setLoading(false);
   }, []);
 

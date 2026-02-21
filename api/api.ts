@@ -16,8 +16,11 @@ export const api: any = {
 
     addProduct: '/products/add-product/',
     // 订单
+    orderList: '/orders/list/',
     addOrder: '/orders/add/',
-    userOrders:'orders/user/'
+    userOrders:'orders/user/',
+    updateOrderStatus: '/orders/update-order-status/',
+  
     // 管理端接口
 
 };

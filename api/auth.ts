@@ -149,3 +149,38 @@ export const saveAddressApi = (clerkId: string, address: string) =>
     clerk_id: clerkId,
     address,
   });
+
+// 获取订单列表（管理员后台用）
+export const getOrderListApi = (options?: {
+  page?: number;
+  page_size?: number;
+  params?: {
+    user_id?: number;
+    status?: string;
+  };
+}) => {
+  const { page, page_size, params } = options || {};
+
+  // 只保留有效筛选字段
+  const filteredParams: Record<string, any> = {};
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== "" && value !== null && value !== undefined) {
+        filteredParams[key] = value;
+      }
+    });
+  }
+
+  return http.post(api.orderList, {
+    page: page_size && !page ? 1 : page,
+    page_size,
+    params: filteredParams,
+  });
+};
+
+// 更新订单状态（发货、完成等）
+export const updateOrderStatusApi = (orderId: number, status: string) =>
+  http.post(api.updateOrderStatus, {
+    id: orderId,
+    status,
+  });

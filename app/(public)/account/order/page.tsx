@@ -178,7 +178,7 @@ export default function AccountPage() {
                                         {/* Content */}
                                         <CollapsibleContent className="px-4 pt-2">
                                             <div className="grid gap-3 mt-2">
-                                                {order.items.map((item) => (
+                                                {order.items.map((item,idx) => (
                                                     <div
                                                         key={item.order_item_id}
                                                         onClick={() => {
@@ -208,9 +208,9 @@ export default function AccountPage() {
                                                 ))}
                                             </div>
 
-                                            <div className="mt-3 text-sm text-brand-purple font-semibold">
+                                            {/* <div className="mt-3 text-sm text-brand-purple font-semibold">
                                                 View invoice →
-                                            </div>
+                                            </div> */}
                                         </CollapsibleContent>
                                     </Collapsible>
                                 ))}
