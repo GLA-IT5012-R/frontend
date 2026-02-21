@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { uploadTextureApi } from "@/api/auth";
+import { toast } from "sonner"
 
 export const LABELS = {
   SIZE: "Size",
@@ -37,19 +38,41 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setUploadError(null);
     setUploading(true);
+
     try {
-      const res = await uploadTextureApi(file);
-      const url = res.data?.url;
-      if (url) {
-        handleChange("p_texture", url);
+      const res: any = await uploadTextureApi(file);
+
+      if (res?.code === 200) {
+        const url = res.data?.url;
+
+        if (url) {
+          handleChange("p_textures", url);
+          toast.success("Texture uploaded successfully");
+        } else {
+          setUploadError("Upload succeeded but no URL returned.");
+          toast.error("Upload failed: no URL returned");
+        }
       } else {
-        setUploadError("Upload succeeded but no URL returned.");
+        const msg = res?.message || "Upload failed";
+        setUploadError(msg);
+        toast.error(msg);
       }
     } catch (err: unknown) {
-      const ax = err as { response?: { data?: { message?: string } }; message?: string };
-      setUploadError(ax?.response?.data?.message ?? ax?.message ?? "Upload failed.");
+      const ax = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+
+      const msg =
+        ax?.response?.data?.message ??
+        ax?.message ??
+        "Upload failed.";
+
+      setUploadError(msg);
+      toast.error(msg);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -62,9 +85,8 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
         <button
           key={item}
           type="button"
-          className={`px-3 py-1 rounded-full border-2 ${
-            formData?.[field] === item ? "border-blue-500 bg-blue-50" : "border-gray-300"
-          }`}
+          className={`px-3 py-1 rounded-full border-2 ${formData?.[field] === item ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            }`}
           onClick={() => handleChange(field, item)}
         >
           {item}
@@ -118,10 +140,9 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                     <button
                       key={key}
                       type="button"
-                      className={`w-16 h-16 rounded-full border-2 overflow-hidden ${
-                        formData?.p_texture === key ? "border-blue-500" : "border-gray-300"
-                      }`}
-                      onClick={() => handleChange("p_texture", key)}
+                      className={`w-16 h-16 rounded-full border-2 overflow-hidden ${formData?.p_textures === key ? "border-blue-500" : "border-gray-300"
+                        }`}
+                      onClick={() => handleChange("p_textures", key)}
                     >
                       <img src={urls[0]} alt={key} className="w-full h-full object-cover" />
                     </button>
@@ -131,10 +152,9 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                   {uploadedTextureUrl && (
                     <button
                       type="button"
-                      className={`w-16 h-16 rounded-full border-2 overflow-hidden shrink-0 ${
-                        formData?.p_texture === uploadedTextureUrl ? "border-blue-500" : "border-gray-300"
-                      }`}
-                      onClick={() => handleChange("p_texture", uploadedTextureUrl)}
+                      className={`w-16 h-16 rounded-full border-2 overflow-hidden shrink-0 ${formData?.p_textures === uploadedTextureUrl ? "border-blue-500" : "border-gray-300"
+                        }`}
+                      onClick={() => handleChange("p_textures", uploadedTextureUrl)}
                     >
                       <img
                         src={uploadedTextureUrl}
@@ -145,9 +165,8 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                   )}
 
                   <label
-                    className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${
-                      uploading ? "border-gray-200 bg-gray-50 cursor-not-allowed" : "border-gray-300 hover:border-gray-400"
-                    }`}
+                    className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${uploading ? "border-gray-200 bg-gray-50 cursor-not-allowed" : "border-gray-300 hover:border-gray-400"
+                      }`}
                   >
                     <input
                       type="file"

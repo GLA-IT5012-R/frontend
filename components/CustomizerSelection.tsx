@@ -28,12 +28,12 @@ export function CustomizerSelection({
   }, [formData]);
 
   useEffect(() => {
-    const v = formData?.p_texture;
+    const v = formData?.p_textures;
     if (v && isTextureUrl(String(v))) setUploadedTextureUrl(v);
-  }, [formData?.p_texture]);
+  }, [formData?.p_textures]);
 
   const handleFormChange = (field: string, value: any) => {
-    if (field === "p_texture" && isTextureUrl(String(value))) {
+    if (field === "p_textures" && isTextureUrl(String(value))) {
       setUploadedTextureUrl(value);
     }
     onChange(field, value);
@@ -43,7 +43,7 @@ export function CustomizerSelection({
 
   const typeId = data?.asset?.type_id;
   const presetTextures = typeId ? data?.p_textures?.[typeId] : undefined;
-  const currentPTexture = localFormData?.p_texture;
+  const currentPTexture = localFormData?.p_textures;
 
   const textureUrlsForCanvas: string[] = (() => {
     if (!presetTextures) return [];

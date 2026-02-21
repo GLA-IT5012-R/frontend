@@ -145,7 +145,7 @@ export default function AccountPage() {
 
                                                 <div className="min-w-0 flex-1">
                                                     <p className="font-bold text-base md:text-lg font-mono break-all">
-                                                        #{order.order_id} <span className={`px-3 py-1 rounded-2xl text-xs font-semibold border ${getStatusStyle(
+                                                        #{order.order_number} <span className={`px-3 py-1 rounded-xl text-xs font-semibold border ${getStatusStyle(
                                                             order.order_status
                                                         )}`}
                                                         >{order.order_status}</span>
@@ -247,6 +247,7 @@ export default function AccountPage() {
                                             <span className="text-sm">
                                                 {selectedItem.quantity} × £{selectedItem.unit_price} ={" "}
                                                 <span className="font-bold text-green-600">
+                                                   
                                                     £{(Number(selectedItem.unit_price) * selectedItem.quantity).toFixed(2)}
                                                 </span>
                                             </span>
@@ -258,7 +259,7 @@ export default function AccountPage() {
                                             <OrderConvas
                                                 typeId={selectedItem?.product?.type_id || ""}
                                                 finish={selectedItem?.p_finish || ""}
-                                                textureUrl={selectedItem?.p_textures}
+                                                textureUrl={selectedItem?.design.p_textures}
                                                 isDoubleSided={selectedItem.product?.is_double_sided}
                                                 orbitControls={true}
                                                 className="h-full w-full"

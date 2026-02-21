@@ -37,7 +37,6 @@ export function OrderConvas({
     className,
     style,
 }: CustomizerCanvasProps) {
-
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas shadows camera={{ position, fov: 55 }} style={{ width: '100%', height: '100%' }}>
