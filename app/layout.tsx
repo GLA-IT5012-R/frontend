@@ -1,7 +1,8 @@
+
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from '@/contexts/auth-context';
-import { CartProvider } from "@/contexts/cart-context";
+import PaypalProvider from "@/contexts/paypal-providers";
 import { Toaster } from "@/components/ui/sonner"
 import { Bowlby_One_SC, DM_Mono } from "next/font/google";
 import "./globals.css";
@@ -40,9 +41,16 @@ export default function RootLayout({
         >
           <AuthProvider>
             {/* <CartProvider> */}
-            <main className="relative">
-              {children}
-            </main>
+            <PaypalProvider
+              options={{
+                "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+                currency: "USD",
+              }}
+            >
+              <main className="relative">
+                {children}
+              </main>
+            </PaypalProvider>
             {/* </CartProvider> */}
           </AuthProvider>
           <Toaster richColors={true} />

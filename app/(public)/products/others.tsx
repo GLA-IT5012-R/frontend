@@ -14,10 +14,12 @@ export function Title(data: any): React.ReactElement | null {
         <VerticalLine className={clsx(VERTICAL_LINE_CLASSES, "left-4")} />
         <VerticalLine className={clsx(VERTICAL_LINE_CLASSES, "right-4")} />
         <div className="flex items-center justify-between ~text-sm/2xl">
-            <span>￡ {data.price}</span>
+            <span>￡ {data.price} </span>
+            <span>{String(data.asset.type).toUpperCase()}</span>
             <span className="inline-flex items-center gap-1">
                 <FaStar className="text-yellow-400" /> {data.reviews}
             </span>
         </div>
+        
     </>)
 }

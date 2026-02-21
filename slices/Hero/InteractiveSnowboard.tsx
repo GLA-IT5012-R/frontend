@@ -10,7 +10,7 @@ import { Hotspot } from "./Hotspot";
 import { WavyPaths } from "./WavyPaths";
 import { useControls } from "leva";
 
-const INITIAL_CAMERA_POSITION = [-2.5, 2, 3] as const;
+const INITIAL_CAMERA_POSITION = [-2.5, 2.2, 3] as const;
 
 type Props = {
   deckTextureURL: string;
@@ -22,10 +22,10 @@ type Props = {
 export function InteractiveSnowboard() {
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center justify-center ">
       <Canvas
         className="min-h-[60rem] w-full bg"
-        camera={{ position: INITIAL_CAMERA_POSITION, fov: 55, near: 0.001, far: 100000 }}
+        camera={{ position: INITIAL_CAMERA_POSITION, fov: 60, near: 0.001, far: 100000 }}
       >
         <Suspense fallback={null}>
           <Scene />
@@ -109,6 +109,7 @@ function Scene() {
       jumpTrick(board, origin); // 小跳跃动作
     }
   }
+  
   // 前压/后仰动作（Carve）
   function carve(board: THREE.Group) {
     jumpBoard(board);
@@ -166,8 +167,8 @@ function Scene() {
         environmentIntensity={0.6}
       /> */}
       <group ref={originRef}>
-        <group ref={containerRef} position={[0, 0, 0]}>
-          <group position={[0, 0, 0]}>
+        <group ref={containerRef} >
+          <group position={[0, 0.12, 0]}>
             <Snowboard />
 
             <Hotspot
@@ -203,21 +204,21 @@ function Scene() {
           </group>
         </group>
       </group>
-      <ContactShadows opacity={0.6} position={[0, -0.08, 0]} />
-      <group
-        rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+      <ContactShadows opacity={0.6} position={[0, 0, 0]} />
+      {/* <group
+        rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.09, -0.5]}
         scale={[0.2, 0.2, 0.2]}
       >
         <Html
           wrapperClass="pointer-events-none"
           transform
-          zIndexRange={[1, 0]}
+          zIndexRange={[1,0]}
           occlude="blending"
         >
           <WavyPaths />
         </Html>
-      </group>
+      </group> */}
     </group>
   );
 }

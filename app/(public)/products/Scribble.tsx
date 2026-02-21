@@ -20,7 +20,7 @@ export function Scribble({ color, ...props }: SVGProps<SVGSVGElement>) {
       />
       <filter id="scribble">
         <feTurbulence
-          baseFrequency="0.05"
+          baseFrequency="0.1"
           id="turbulence"
           numOctaves="2"
           result="noise"

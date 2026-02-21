@@ -85,9 +85,9 @@ export const homepage: Homepage = {
     },
     {
       slice_type: 'product_grid',
-      heading: "Latest Drop",
+      heading: "Latest & Hot",
       body: [
-        { type: 'paragraph', text: "Check out our newest skateboard designs" }
+        { type: 'paragraph', text: "Check out our newest snowboard designs" }
       ],
     },
     {

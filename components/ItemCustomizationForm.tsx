@@ -169,7 +169,7 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
           </FieldSet>
 
           {/* Custom Text */}
-          <FieldSet>
+          {/* <FieldSet>
             <FieldGroup>
               <Field>
                 <FieldLabel>{LABELS.CUSTOM_TEXT}</FieldLabel>
@@ -184,7 +184,7 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                 />
               </Field>
             </FieldGroup>
-          </FieldSet>
+          </FieldSet> */}
 
           {/* Quantity */}
           <FieldSet>

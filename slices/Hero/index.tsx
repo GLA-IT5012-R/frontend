@@ -25,13 +25,6 @@ export type HeroProps = {
  */
 const Hero = ({ slice }: HeroProps): JSX.Element => {
 
-
-  // const { isSignedIn } = useUser();
-  const router = useRouter();
-
-  const handleBuild = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
   return (
     <Bounded
       data-slice-type={slice.slice_type}
@@ -47,7 +40,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
         <Heading className="relative max-w-2xl place-self-start ">
           {slice.heading}
         </Heading>
-        <div className="flex relative w-full flex-col items-center justify-between fl-gap-2/4 lg:flex-row">
+        <div className="flex relative w-full flex-col items-center justify-end fl-gap-2/4 lg:flex-row">
           <div className="max-w-[45ch] font-semibold fl-text-lg/xl">
             {slice.body.map((paragraph, index) => {
               if (paragraph.emphasis) {
@@ -63,22 +56,9 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
               return <p key={index}>{paragraph.text}</p>;
             })}
           </div>
-          {/* <Link
-            href={slice.button.url}
-            // href={slice.button.url}
-            onClick={handleBuild}
-            className="button-cutout group z-5 mt-2 inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-4 px-2 fl-text-lg/2xl fl-py-0.5/4 from-brand-blue to-brand-lime text-black md:mr-4"
-          >
-            <div className="flex fl-size-10/12 items-center justify-center transition-transform group-hover:-rotate-[25deg]">
-              <SkateboardIcon className="h-full w-full" />
-            </div>
-            <div className="w-px self-stretch bg-black/25" />
-            {slice.button.text}
-          </Link> */}
         </div>
       </div>
       {/* 3d-模型 */}
-      
       <InteractiveSnowboard />
     </Bounded>
   );

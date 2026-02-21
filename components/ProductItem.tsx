@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from "react";
 import { Scribble } from "../app/(public)/products/Scribble";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { Title } from '../app/(public)/products/others'
 import { addCustomDesignApi, addOrderApi } from "@/api/auth";
 import { toast } from "sonner"
 import { useAuth } from '@/contexts/auth-context';
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 const SCRIBBLE_COLORS = [
   '#f97316', // orange
@@ -35,7 +37,7 @@ const getDefault = (str?: string) => {
   return arr[0] || "";
 }
 
-export function ProductItem({ idx, data }: any): React.ReactElement | null {
+export function ProductItem({ idx, data, noScribble }: any): React.ReactElement | null {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<any>(null); // 保存 CustomizerSelection 的 formData
@@ -169,10 +171,12 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
     <div className="group relative mx-auto w-full max-w-72 px-8 pt-4 ">
       <Title {...data} />
       <div className="-mb-1 overflow-hidden py-4">
-        <Scribble
-          className="absolute inset-0 h-full w-full"
-          color={scribbleColor}
-        />
+        {!noScribble && (
+          <Scribble
+            className="absolute inset-0 h-full w-full"
+            color={scribbleColor}
+          />
+        )}
 
         {data.asset && data.p_textures?.[data.asset.type_id] && (
           <ProductModelCanvas
@@ -201,8 +205,8 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
                 transition-[filter,background-position] duration-300
                 rounded-md text-black
                 ${data.status
-                            ? 'button-cutout bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] hover:bg-bottom from-brand-blue to-brand-lime'
-                            : 'button-cutout bg-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-300'}
+                  ? 'button-cutout bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] hover:bg-bottom from-brand-blue to-brand-lime'
+                  : 'button-cutout bg-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-300'}
               `}
             >
               {data.status ? 'Customize' : 'Sold Out'}
@@ -232,6 +236,86 @@ export function ProductItem({ idx, data }: any): React.ReactElement | null {
               <Button variant="destructive" onClick={() => onPay(formData)}>
                 Pay it
               </Button>
+              {/* {formData && (
+                <PayPalButtons
+                  style={{ layout: "vertical" }}
+                  createOrder={async (dataPayPal, actions) => {
+                    const quantity = formData.quantity || 1;
+                    const totalPrice = quantity * data.price;
+
+                    return actions.order.create({
+                      purchase_units: [
+                        {
+                          amount: {
+                            value: totalPrice.toString(),
+                          },
+                        },
+                      ],
+                    });
+                  }}
+                  onApprove={async (dataPayPal, actions) => {
+                    try {
+                      // 1️⃣ 捕获支付
+                      const details = await actions.order?.capture();
+                      console.log("Payment success:", details);
+
+                      // 2️⃣ 创建 design
+                      const designRes = await addCustomDesignApi({
+                        product_id: data.id,
+                        user_id: userid,
+                        p_size: formData.p_size,
+                        p_finish: formData.p_finish,
+                        p_flex: formData.p_flex,
+                        p_textures: formData.p_textures || [],
+                      });
+
+                      if (designRes.code !== 200) {
+                        toast.error("Failed to create design");
+                        return;
+                      }
+
+                      const designId = designRes.data.id;
+                      const productId = designRes.data.product_id;
+
+                      const quantity = formData.quantity || 1;
+                      const unitPrice = data.price;
+                      const totalPrice = quantity * unitPrice;
+
+                      // 3️⃣ 创建订单（Paid）
+                      const orderRes = await addOrderApi({
+                        user_id: userid,
+                        total_price: totalPrice,
+                        order_status: "Paid",
+                        address: user?.address,
+                        email: user?.email,
+                        list: [
+                          {
+                            design_id: designId,
+                            product_id: productId,
+                            quantity,
+                            unit_price: unitPrice,
+                          },
+                        ],
+                      });
+
+                      if (orderRes.code === 200) {
+                        toast.success("Payment successful 🎉");
+                        setOpen(false);
+                      } else {
+                        toast.error("Order creation failed");
+                      }
+
+                    } catch (err) {
+                      console.error(err);
+                      toast.error("Payment failed");
+                    }
+                  }}
+                  onError={(err) => {
+                    console.error("PayPal error:", err);
+                    toast.error("Payment error");
+                  }}
+                />
+              )} */}
 
               <DrawerClose asChild>
                 <Button onClick={handleDrawerClose} variant="outline">Cancel</Button>
