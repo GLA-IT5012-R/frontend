@@ -106,8 +106,6 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
 
     try {
       // 1️⃣ 先创建定制
-       console.log(formData)
-      debugger
       const designRes = await addCustomDesignApi({
         product_id: data.id,
         user_id: userid, // TODO: replace with actual user ID
