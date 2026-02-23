@@ -1,14 +1,16 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Bounded } from "@/components/Bounded";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { toast } from "sonner";
+import { getUserCartApi, updateCartQuantityApi, deleteCartApi, addOrderApi } from "@/api/auth";
+import { debounce } from "lodash";
 
-// 数据类型
 interface Customisation {
   id: number;
-  product_id: number;
   p_size: string;
   p_finish: string;
   p_flex: string;
@@ -16,121 +18,198 @@ interface Customisation {
 }
 
 interface CartItem {
-  id: number;
-  user_id: number;
+  cart_item_id: number;
   design: Customisation;
   quantity: number;
-  unit_price: number;
+  unit_price: string;
+  created_at: string;
 }
-
-// 模拟购物车初始数据
-const initialCart: CartItem[] = [
-  {
-    id: 1,
-    user_id: 101,
-    design: {
-      id: 201,
-      product_id: 301,
-      p_size: "M",
-      p_finish: "Glossy",
-      p_flex: "Medium",
-      p_textures: { top: ["TX001.png"], bottom: ["TX002.png"] },
-    },
-    quantity: 1,
-    unit_price: 499.99,
-  },
-  {
-    id: 2,
-    user_id: 101,
-    design: {
-      id: 202,
-      product_id: 302,
-      p_size: "L",
-      p_finish: "Matte",
-      p_flex: "Soft",
-      p_textures: { top: ["TX003.png"], bottom: ["TX004.png"] },
-    },
-    quantity: 2,
-    unit_price: 599.99,
-  },
-];
 
 const Cart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const userIdRef = useRef<number | null>(null);
+
+  const fetchCart = async () => {
+    try {
+      const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
+      userIdRef.current = userId;
+      const res = await getUserCartApi(userId);
+      if (res.code === 200) {
+        setCart(res.data);
+        setSelectedItems([]);
+      }
+    } catch (error) {
+      toast.error("Failed to load cart");
+    }
+  };
 
   useEffect(() => {
-    // const stored = localStorage.getItem("cart");
-    // if (stored) setCart(JSON.parse(stored));
-    // else setCart(initialCart);
-    setCart(initialCart)
+    fetchCart();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  const debouncedUpdate = useCallback(
+    debounce(async (id: number, quantity: number) => {
+      try {
+        await updateCartQuantityApi(id, quantity);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to update quantity");
+        fetchCart();
+      }
+    }, 500),
+    []
+  );
 
   const updateQuantity = (id: number, quantity: number) => {
     if (quantity < 1) return;
-    setCart((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+    setCart(prev =>
+      prev.map(item => (item.cart_item_id === id ? { ...item, quantity } : item))
+    );
+    debouncedUpdate(id, quantity);
+  };
+
+  const toggleSelectItem = (id: number) => {
+    setSelectedItems(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
-  const removeItem = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-    toast.success("Item removed from cart");
+  const toggleSelectAll = () => {
+    if (selectedItems.length === cart.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cart.map(item => item.cart_item_id));
+    }
+  };
+
+  const removeItems = async (ids: number[]) => {
+    if (ids.length === 0) return;
+    try {
+      await deleteCartApi(ids);
+      toast.success("Item(s) removed");
+      fetchCart();
+    } catch (err) {
+      console.error(err);
+      toast.error("Delete failed");
+    }
+  };
+
+  const checkoutSelected = async () => {
+    if (selectedItems.length === 0) return;
+    try {
+      const itemsToOrder = cart.filter(item => selectedItems.includes(item.cart_item_id));
+      const orderPayload = itemsToOrder.map(item => ({
+        design_id: item.design.id,
+        quantity: item.quantity,
+        unit_price: parseFloat(item.unit_price),
+      }));
+      await addOrderApi(orderPayload);
+      toast.success("Order created successfully");
+      await removeItems(selectedItems);
+    } catch (err) {
+      console.error(err);
+      toast.error("Checkout failed");
+    }
   };
 
   const getTotal = () =>
-    cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0).toFixed(2);
+    cart.reduce((sum, item) => sum + parseFloat(item.unit_price) * item.quantity, 0).toFixed(2);
+
+  const getSelectedTotal = () =>
+    cart
+      .filter(item => selectedItems.includes(item.cart_item_id))
+      .reduce((sum, item) => sum + parseFloat(item.unit_price) * item.quantity, 0)
+      .toFixed(2);
 
   return (
     <Bounded className="bg-brand-gray p-8">
       <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
 
       {cart.length === 0 ? (
-        <p className="text-gray-600">Your cart is empty.</p>
-      ) : (
-        <div className="space-y-4">
-          {cart.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white rounded shadow"
-            >
-              <div className="flex-1 space-y-1">
-                <p>
-                  <span className="font-semibold">Size:</span> {item.design.p_size} |{" "}
-                  <span className="font-semibold">Finish:</span> {item.design.p_finish} |{" "}
-                  <span className="font-semibold">Flex:</span> {item.design.p_flex}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Textures: {Object.values(item.design.p_textures).flat().join(", ")}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-4 mt-2 sm:mt-0">
-                <Input
-                  type="number"
-                  value={item.quantity}
-                  min={1}
-                  className="w-20"
-                  onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
-                />
-                <p className="font-semibold">${(item.unit_price * item.quantity).toFixed(2)}</p>
-                <Button variant="destructive" onClick={() => removeItem(item.id)}>
-                  Remove
-                </Button>
-              </div>
-            </div>
-          ))}
-
-          <div className="text-right mt-6 text-xl font-bold">
-            Total: ${getTotal()}
-          </div>
-          <div className="text-right mt-2">
-            <Button>Proceed to Checkout</Button>
-          </div>
+        <div className="text-center text-3xl py-12">
+          <p className="text-gray-600">Your cart is empty..</p>
         </div>
+      ) : (
+        <>
+          {/* 全选 + 批量删除 */}
+          <FieldGroup className="mb-4 flex  gap-4">
+            <Field orientation="horizontal">
+              <Checkbox
+                id="select-all"
+                checked={selectedItems.length === cart.length}
+                onCheckedChange={toggleSelectAll}
+              />
+              <FieldLabel htmlFor="select-all" >Select All</FieldLabel>
+
+              <Button
+                variant="destructive"
+                disabled={selectedItems.length === 0}
+                onClick={() => removeItems(selectedItems)}
+              >
+                Delete Selected
+              </Button>
+            </Field>
+          </FieldGroup>
+
+          <div className="space-y-4">
+            {cart.map(item => (
+              <div
+                key={item.cart_item_id}
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white rounded shadow"
+              >
+                <div className="flex items-center gap-4">
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id={`cart-${item.cart_item_id}`}
+                      checked={selectedItems.includes(item.cart_item_id)}
+                      onCheckedChange={() => toggleSelectItem(item.cart_item_id)}
+                    />
+                    <FieldLabel htmlFor={`cart-${item.cart_item_id}`}>
+                      <span className="font-semibold">Size:</span> {item.design.p_size} |{" "}
+                      <span className="font-semibold">Finish:</span> {item.design.p_finish} |{" "}
+                      <span className="font-semibold">Flex:</span> {item.design.p_flex}
+                    </FieldLabel>
+                  </Field>
+                </div>
+
+                <div className="flex items-center gap-4 mt-2 sm:mt-0">
+                  <Input
+                    type="number"
+                    value={item.quantity}
+                    min={1}
+                    className="w-20"
+                    onChange={e =>
+                      updateQuantity(item.cart_item_id, Number(e.target.value))
+                    }
+                  />
+                  <p className="font-semibold">
+                    £{(parseFloat(item.unit_price) * item.quantity).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+            <div className="text-right mt-6 text-xl font-bold">
+              Total: £{getTotal()}
+            </div>
+            <div className="text-right mt-2 text-lg font-semibold">
+              Selected Total: £{getSelectedTotal()}
+            </div>
+
+            <div className="text-right mt-4 flex justify-end gap-4">
+              <Button onClick={() => removeItems(cart.map(i => i.cart_item_id))}>
+                Clear Cart
+              </Button>
+              <Button
+                disabled={selectedItems.length === 0}
+                onClick={checkoutSelected}
+              >
+                Checkout Selected
+              </Button>
+            </div>
+          </div>
+        </>
       )}
     </Bounded>
   );

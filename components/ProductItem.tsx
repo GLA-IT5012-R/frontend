@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Scribble } from "../app/(public)/products/Scribble";
-import Link from "next/link";
 import { ProductModelCanvas } from "@/components/ProductModelCanvas";
 import {
   Drawer,
@@ -17,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
-import { addCustomDesignApi, addOrderApi } from "@/api/auth";
+import { addCustomDesignApi, addOrderApi,addCartApi } from "@/api/auth";
 import { toast } from "sonner"
 import { useAuth } from '@/contexts/auth-context';
 import { PayPalButtons } from "@paypal/react-paypal-js";
@@ -64,30 +63,48 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
   // --------------------------
   // 加入购物车逻辑
   // --------------------------
-  const onAddToCart = (formData: any) => {
-    if (!formData) return;
+  const onAddToCart = async (formData: any) => {
+  if (!formData) return;
 
-    console.log("Add to cart:", {
-      productId: data.id,
-      ...formData
-    });
-    // alert(`Added to cart: ${data.name} (Qty: ${formData.quantity})`);
-    toast.success(`Added to cart: ${data.name} (Qty: ${formData.quantity})`)
-    // submit formData to backend
-    addCustomDesignApi({
+  try {
+    // 1️⃣ 先生成 design
+    const res = await addCustomDesignApi({
       product_id: data.id,
-      user_id: userid, // TODO: replace with actual user ID
+      user_id: userid,
       p_size: formData.p_size,
       p_finish: formData.p_finish,
       p_flex: formData.p_flex,
       p_textures: formData.p_textures || [],
-    }).then((res) => {
-      console.log("Custom design added:", res);
-
-    }).catch((err) => {
-      console.error("Failed to add custom design:", err);
     });
+
+    console.log("Custom design added:", res);
+
+    if (res.code !== 200) {
+      toast.error("Failed to create design");
+      return;
+    }
+
+    const designId = res.data.id;
+
+    // 2️⃣ 添加到购物车
+    const cartRes = await addCartApi(
+      userid,
+      designId,
+      1, // 默认数量
+      data.price // ⚠️ 确保 product 有 price
+    );
+
+    if (cartRes.code === 200) {
+      toast.success("Added to cart successfully");
+    } else {
+      toast.error("Failed to add to cart");
+    }
+
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    toast.error("Something went wrong");
   }
+};
 
   // --------------------------
   // 下单 / 支付逻辑

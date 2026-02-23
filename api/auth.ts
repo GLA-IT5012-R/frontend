@@ -1,5 +1,5 @@
 import http from '@/utils/axios';
-import {api} from './api';
+import { api } from './api';
 
 export const authApi = {
   // 请求验证码
@@ -183,4 +183,40 @@ export const updateOrderStatusApi = (orderId: number, status: string) =>
   http.post(api.updateOrderStatus, {
     id: orderId,
     status,
+  });
+
+export const addCartApi = (
+  user_id: number,
+  design_id: number,
+  quantity: number,
+  unit_price: number
+) =>
+  http.post(api.addCart, {
+    user_id,
+    design_id,
+    quantity,
+    unit_price,
+  });
+
+export const getUserCartApi = (userId: number) => {
+  console.log("api.cartList:", api.cartlist);
+  console.log("userId:", userId);
+  return http.get(`${api.cartlist}${userId}/`);
+
+}
+
+export const updateCartQuantityApi = (
+  cartItemId: number,
+  quantity: number
+) =>
+  http.patch(`${api.updcart}${cartItemId}/`, {
+    quantity,
+  });
+
+
+export const deleteCartApi = (ids: number[]) =>
+  http.delete(api.delcarts, {
+    data: {
+      cart_item_ids: ids,
+    },
   });

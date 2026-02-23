@@ -6,6 +6,7 @@ export const api: any = {
     testAuth: '/testAuth/',
     syncUser: '/sync-user/',
     saveAddr:'/save-address/',
+    // products
     getProducts: '/products/list/',
     addProducts: '/products/add/',
     getAssetsList: '/products/assets/',
@@ -13,14 +14,17 @@ export const api: any = {
     statsOverview: '/stats-overview/',
     upload: '/products/upload/',
     addCustomDesign: '/products/add-design/',
-
     addProduct: '/products/add-product/',
-    // 订单
-    orderList: '/orders/list/',
-    addOrder: '/orders/add/',
-    userOrders:'orders/user/',
-    updateOrderStatus: '/orders/update-order-status/',
-  
+    // shops order/cart
+    orderList: '/shops/list/',
+    addOrder: '/shops/add/',
+    usershops:'shops/user/',
+    updateshopstatus: '/shops/update-order-status/',
+    addCart:'/shops/add-cart/',
+    updcart:'/shops/updare-cart/',
+    cartlist:'/shops/cart/',
+    delcarts:'/shops/delcarts/'
+
     // 管理端接口
 
 };
