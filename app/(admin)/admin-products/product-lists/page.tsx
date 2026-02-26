@@ -47,7 +47,7 @@ type Product = {
 type Asset = {
   asset_id: number;
   type: string;
-  type_id: string;
+  asset_code: string;
   // 其他字段...
 };
 
@@ -71,7 +71,7 @@ const ProductListPage = () => {
     status: true,
     p_size: "",
     p_finish: "",
-    assets_id: "",
+    asset_code: "",
     p_flex: "",
     p_desc: "",
   });
@@ -120,8 +120,8 @@ const ProductListPage = () => {
   }, []);
 
   const handleSubmit = async () => {
-    console.log(formData.assets_id)
-    if (!formData.assets_id) {
+    console.log(formData.asset_code)
+    if (!formData.asset_code) {
       toast.warning(`Please select a model asset!`)
       return;
     }
@@ -206,7 +206,7 @@ const ProductListPage = () => {
                   </TableCell>
                   <TableCell>{p.p_size}</TableCell>
                   <TableCell>{p.p_finish}</TableCell>
-                  <TableCell>{p.asset?.type || ""} [{p.asset?.type_id || ""}]</TableCell>
+                  <TableCell>{p.asset?.type || ""} [{p.asset?.asset_code || ""}]</TableCell>
                 </TableRow>
               ))}
               {products.length === 0 && (
@@ -254,10 +254,10 @@ const ProductListPage = () => {
             <div>
               <Label>Model Asset</Label>
               <NativeSelect
-                value={formData.assets_id}
+                value={formData.asset_code}
                 onChange={(e) => {
                   console.log(e.target.value)
-                  return setFormData({ ...formData, assets_id: e.target.value })
+                  return setFormData({ ...formData, asset_code: e.target.value })
                 }
                 }
               >
@@ -266,7 +266,7 @@ const ProductListPage = () => {
                 </NativeSelectOption>
                 {assets.map((a) => (
                   <NativeSelectOption key={a.asset_id} value={a.asset_id}>
-                    {a.type}[{a.type_id}]
+                    {a.type}[{a.asset_code}]
                   </NativeSelectOption>
                 ))}
               </NativeSelect>

@@ -16,7 +16,7 @@ import { getAssetsList } from "@/api/auth";
 type ProductAsset = {
   asset_id: number;
   type: string;
-  type_id: string;
+  asset_code: string;
   texture_urls: Record<string, string[]>;
 };
 
@@ -92,7 +92,7 @@ const ProductAssetsPage = () => {
                     {asset.asset_id}
                   </TableCell>
                   <TableCell>{asset.type}</TableCell>
-                  <TableCell>{asset.type_id}</TableCell>
+                  <TableCell>{asset.asset_code}</TableCell>
                   <TableCell>
                     {Object.keys(asset.texture_urls || {}).join(", ") || "-"}
                   </TableCell>

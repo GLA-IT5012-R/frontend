@@ -24,7 +24,7 @@ export default function DashboardPage() {
         setStats({
           user_count: data.user_count || 0,
           product_count: data.product_count || 0,
-          order_count: 42, // temporary mock data
+          order_count: data.order_count, // temporary mock data
         });
       } catch (e) {
         console.error("Failed to load stats", e);

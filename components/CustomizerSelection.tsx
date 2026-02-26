@@ -19,21 +19,21 @@ export function CustomizerSelection({
   onChange,
   renderButtons,
 }: CustomizerSelectionProps): React.ReactElement {
+
   const [localFormData, setLocalFormData] = useState(formData);
   // 用户上传的纹理 URL 单独保存，切换回预设后仍可回显与再次选择
   const [uploadedTextureUrl, setUploadedTextureUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLocalFormData(formData);
-  }, [formData]);
-
-  useEffect(() => {
-    const v = formData?.p_textures;
-    if (v && isTextureUrl(String(v))) setUploadedTextureUrl(v);
-  }, [formData?.p_textures]);
+  // useEffect(() => {
+  //   const v = formData?.p_textures;
+  //   if (v && isTextureUrl(String(v))) setUploadedTextureUrl(v);
+  // }, [formData?.p_textures]);
 
   const handleFormChange = (field: string, value: any) => {
-    if (field === "p_textures" && isTextureUrl(String(value))) {
+    console.log(value)
+    debugger
+    if (field === "p_img" && isTextureUrl(String(value)) && !presetTextures?.includes(value)) {
+      // 只有当选中的 URL 不是预设纹理时，才更新 uploadedTextureUrl
       setUploadedTextureUrl(value);
     }
     onChange(field, value);
@@ -41,31 +41,31 @@ export function CustomizerSelection({
   };
 
 
-  const typeId = data?.asset?.type_id;
-  const presetTextures = typeId ? data?.p_textures?.[typeId] : undefined;
-  const currentPTexture = localFormData?.p_textures;
+  const assetCode = data?.asset?.asset_code;
+  const presetTextures = assetCode ? data?.p_textures?.[assetCode] : undefined;
+  const currentPTexture = localFormData?.p_img;
 
   const textureUrlsForCanvas: string[] = (() => {
+    if (currentPTexture) {
+      return [currentPTexture];
+    }
     if (!presetTextures) return [];
     const firstPresetUrl = Array.isArray(presetTextures)
       ? presetTextures[0]
-      : (Object.values(presetTextures as Record<string, string[]>) as string[][])[0]?.[0];
-    if (!currentPTexture) return firstPresetUrl ? [firstPresetUrl] : [];
-    if (isTextureUrl(currentPTexture)) return [currentPTexture];
-    if (Array.isArray(presetTextures)) return firstPresetUrl ? [firstPresetUrl] : [];
-    const urls = (presetTextures as Record<string, string[]>)[currentPTexture];
-    return urls?.length ? [urls[0]] : firstPresetUrl ? [firstPresetUrl] : [];
+      : Object.values(presetTextures as Record<string, string[]>)[0]?.[0];
+
+    return firstPresetUrl ? [firstPresetUrl] : [];
   })();
 
 
-  
+
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-[600px] border border-gray-200 rounded-lg overflow-hidden">
       {/* Left: 3D Model Canvas */}
       <div className="w-full lg:w-1/2 bg-gray-50 h-[500px] lg:h-auto relative shrink-0">
         {data.asset && (presetTextures || textureUrlsForCanvas.length > 0) && (
           <CustomizerCanvas
-            typeId={data.asset.type_id}
+            assetCode={data.asset.asset_code}
             finish={localFormData?.p_finish || ""}
             textureUrls={textureUrlsForCanvas}
             customText={localFormData?.p_custom_text ?? ""}
@@ -82,6 +82,7 @@ export function CustomizerSelection({
           <ProductCustomizationForm
             data={data}
             formData={localFormData}
+            presetTextures={presetTextures}
             uploadedTextureUrl={uploadedTextureUrl}
             onChange={handleFormChange}
           />

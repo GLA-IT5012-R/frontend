@@ -1,0 +1,103 @@
+{
+  "hero": {
+    "tagline": "Crafted for the mountain",
+    "subtitle": "Every snowboard is a conversation — your imagination, our engineering."
+  },
+  "stats": [
+    {
+      "value": "3D",
+      "label": "Real-time design engine"
+    },
+    {
+      "value": "∞",
+      "label": "Design possibilities"
+    },
+    {
+      "value": "48H",
+      "label": "Average delivery"
+    },
+    {
+      "value": "99%",
+      "label": "Customer satisfaction"
+    }
+  ],
+  "sections": [
+    {
+      "id": "about",
+      "index": "01",
+      "title": "About Us",
+      "items": [
+        {
+          "question": "What is Board Atelier?",
+          "answer": "Board Atelier is a 3D snowboard customization platform. We combine industrial design with real-time rendering technology, letting every rider design, preview, and order a completely custom snowboard — from graphics and colorways to material finishes — all inside the browser."
+        },
+        {
+          "question": "What's our tech stack?",
+          "answer": "Our rendering engine is built on Three.js with full PBR material support, real-time lighting, and environment mapping. The frontend runs on Next.js and TypeScript for fast, SEO-friendly pages. All design configurations are stored as structured JSON, so every creation is shareable and exportable."
+        },
+        {
+          "question": "Who's behind the team?",
+          "answer": "Our team is made up of riders, 3D artists, and full-stack engineers. Core members come from product design, computer graphics, and professional winter sports backgrounds. We believe the best tools are built by people who genuinely love the sport."
+        }
+      ]
+    },
+    {
+      "id": "customize",
+      "index": "02",
+      "title": "Customization",
+      "items": [
+        {
+          "question": "How do I start my custom build?",
+          "answer": "Head to the configurator and select your board size and base model. The 3D editor loads your board shape instantly. From there, use the color picker, pattern library, or upload your own artwork — every change reflects live on the 3D model in front of you."
+        },
+        {
+          "question": "Can I upload my own artwork?",
+          "answer": "Yes, PNG and SVG files are supported. The system automatically maps your image to the board's UV coordinates. We provide a demo texture and UV guide to help you understand how your artwork will be applied. Recommended resolution: 2048×2048 px. Some board types support double-sided textures, others single-sided.",
+          "img": "/board_base.png"
+        },
+        {
+          "question": "How do I place an order after designing?",
+          "answer": "Once you're happy with your design, click Confirm Design and the system generates a complete design spec file. You can share a link for others to preview it, or go straight to checkout. Production typically takes 3–5 business days."
+        }
+      ]
+    },
+    {
+      "id": "material",
+      "index": "03",
+      "title": "Materials & Craft",
+      "items": [
+        {
+          "question": "What core materials do you use?",
+          "answer": "We offer three core options: a lightweight bamboo-wood composite (great for beginners), a high-density poplar core (all-mountain versatile), and a carbon-fiber hybrid core (competition-grade performance). All models ship with a Sintered 3000 base for exceptional durability."
+        },
+        {
+          "question": "How are graphics applied?",
+          "answer": "We use dye-sublimation printing, which infuses the graphic into the board's topsheet rather than sitting on top of it. This means the art won't peel or scratch off. A UV-resistant clear coat keeps colors vivid even in intense sunlight — our color gamut covers 130% of sRGB."
+        },
+        {
+          "question": "What's the warranty policy?",
+          "answer": "Every board comes with a 2-year structural warranty covering core delamination, edge separation, and manufacturing defects. Normal wear and tear is not covered. Custom graphic color fidelity carries a separate 1-year warranty."
+        }
+      ]
+    },
+    {
+      "id": "faq",
+      "index": "04",
+      "title": "FAQ",
+      "items": [
+        {
+          "question": "Is there a minimum order quantity?",
+          "answer": "No minimums for personal orders — one board is perfectly fine. Team or bulk orders of 10+ boards qualify for volume discounts. Reach out to our business team for a custom quote."
+        },
+        {
+          "question": "Does the 3D editor work on mobile?",
+          "answer": "Yes — the editor is built on WebGL and runs on most modern mobile devices. We recommend a flagship phone from the last two years for the smoothest experience. Lower-end devices fall back to a 2D preview mode automatically."
+        },
+        {
+          "question": "How do I reach support?",
+          "answer": "You can use the live chat in the bottom-right corner, email us at antares.whx@gmail.com, or call during business hours (9 AM – 6 PM). We typically respond within 2 hours."
+        }
+      ]
+    }
+  ]
+}

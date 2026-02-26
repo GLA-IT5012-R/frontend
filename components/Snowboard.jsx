@@ -6,6 +6,7 @@ Command: npx gltfjsx@6.5.3 public/models/snowboard.glb components/Snowboard.tsx
 */
 
 import { useGLTF, useTexture } from '@react-three/drei'
+import { useMemo } from 'react';
 import * as THREE from 'three'
 
 export function Snowboard({ topTexture, bottomColor, sideColor = "#000000", ...props }) {
@@ -35,6 +36,15 @@ export function Snowboard({ topTexture, bottomColor, sideColor = "#000000", ...p
   //   color: sideColor,
   //   roughness: 0.5,
   // });
+  const EDGE_MATERIAL_CONFIG = {
+    black: { color: '#171717' },
+    white: { color: '#f5f5f5' },
+}
+  const edgeMaterial = useMemo(() => {
+    return new THREE.MeshStandardMaterial({
+      ...EDGE_MATERIAL_CONFIG.black,
+    })
+  }, )
 
 
   return (
@@ -42,8 +52,8 @@ export function Snowboard({ topTexture, bottomColor, sideColor = "#000000", ...p
       <group position={[0, 0.012, 0]}>
         <mesh geometry={nodes.snowboard_rocker_1.geometry} material={topMaterial} />
         <mesh geometry={nodes.snowboard_rocker_2.geometry} material={topMaterial} />
-        <mesh geometry={nodes.snowboard_rocker_3.geometry} material={topMaterial} />
-        <mesh geometry={nodes.snowboard_rocker_4.geometry} material={topMaterial} />
+        <mesh geometry={nodes.snowboard_rocker_3.geometry} material={edgeMaterial} />
+        <mesh geometry={nodes.snowboard_rocker_4.geometry} material={edgeMaterial} />
       </group>
       {/* <group position={[0, 0.008, 0]}>
         <mesh geometry={nodes.snowboard_flat_1.geometry} material={materials.topMaterial} />

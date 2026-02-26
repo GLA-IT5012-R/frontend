@@ -50,12 +50,12 @@ const VideoBlock = ({ slice }: VideoBlockProps): JSX.Element => {
             <LazyYouTubePlayer youTubeID={slice.youtube_video_id} />
           ) : null}
           {/* Texture overlay */}
-          {/* <Image
+          <Image
             src="/image-texture.webp"
             alt=""
             fill
             className="pointer-events-none object-cover opacity-50"
-          /> */}
+          />
         </div>
       </div>
     </Bounded>

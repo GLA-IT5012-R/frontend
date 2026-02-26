@@ -159,9 +159,16 @@ function Scene() {
 
   return (
     <group>
-      <Environment preset="city" environmentIntensity={0.4} />
-      
-      
+      <Environment preset="city" environmentIntensity={0.15} />
+      <ambientLight intensity={3.5}/>
+      {/* <directionalLight
+        castShadow
+        position={[0,4,0]}
+        intensity={3}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      /> */}
+
       {/* <Environment
         files={"/hdr/warehouse-512.hdr"}
         environmentIntensity={0.6}

@@ -2,7 +2,8 @@
 
 interface ProductModelInnerProps {
     textureUrls: string[] | undefined
-    typeId: string
+    assetCode: string,
+    finish?: string
 }
 
 import React, { Suspense, useMemo } from 'react'
@@ -11,6 +12,8 @@ import { useGLTF, OrbitControls, Environment, useTexture } from '@react-three/dr
 import * as THREE from 'three'
 import { clsx } from 'clsx'
 
+
+const ENVIRONMENT_COLOR = "#969696";
 
 
 const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> = {
@@ -27,7 +30,7 @@ export function ProductModelCanvas({
     position = [0, 0, 5],
     orbitControls = true,
     finish = 'matte',
-    typeId,
+    assetCode,
     textureUrls,
     className,
     style,
@@ -54,7 +57,7 @@ export function ProductModelCanvas({
 
                     {/* Model */}
                     <ProductModel
-                        typeId={typeId}
+                        assetCode={assetCode}
                         textureUrls={textureUrls}
                         finish={finish}
                     />
@@ -66,12 +69,11 @@ export function ProductModelCanvas({
 }
 
 
-export function ProductModel({ textureUrls, typeId ,finish = 'matte'}: ProductModelInnerProps) {
+export function ProductModel({ textureUrls, assetCode ,finish = 'matte'}: ProductModelInnerProps) {
     const { nodes } = useGLTF('/models/snowboard.glb')
     const { nodes: nodes2 } = useGLTF('/models/snowboard_sharp.glb')
     // 根据 textureUrls 动态生成 texture
     const textures = useTexture(textureUrls || [])
-    console.log(textureUrls, typeId)
     // 可选：统一贴图参数
     textures.forEach((tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
@@ -104,14 +106,14 @@ export function ProductModel({ textureUrls, typeId ,finish = 'matte'}: ProductMo
     })
     // 选择 mesh 组
     const groupNodes = useMemo(() => {
-        switch (typeId) {
+        switch (assetCode) {
             case 'SB-001': return [nodes.snowboard_camber_1, nodes.snowboard_camber_2, nodes.snowboard_camber_3, nodes.snowboard_camber_4]
             case 'SB-002': return [nodes.snowboard_flat_1, nodes.snowboard_flat_2, nodes.snowboard_flat_3, nodes.snowboard_flat_4]
             case 'SB-003': return [nodes.snowboard_rocker_1, nodes.snowboard_rocker_2, nodes.snowboard_rocker_3, nodes.snowboard_rocker_4]
             case 'SB-004': return [nodes2.snowboard_sharp_1, nodes2.snowboard_sharp_2, nodes2.snowboard_sharp_3]
             default: return []
         }
-    }, [typeId, nodes, nodes2])
+    }, [assetCode, nodes, nodes2])
 
     // 返回 mesh 列表
     return (

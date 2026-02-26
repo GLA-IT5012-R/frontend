@@ -8,6 +8,7 @@ import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
 import { FaUser, FaBox, FaPencil, FaCheck } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
+import { TbAddressBook } from "react-icons/tb";
 import { useAuth } from '@/contexts/auth-context';
 import { getUserOrdersApi, saveAddressApi } from "@/api/auth";
 import { ChevronDown } from "lucide-react"
@@ -122,12 +123,12 @@ export default function AccountPage() {
         {/* Profile Header */}
         <div className="max-w-5xl mx-auto">
           <Collapsible className="m-6">
-            <div className="bg-white rounded-lg shadow-md p-4 md:p-8">
+            <div className="bg-white rounded-lg  p-4 md:p-8">
 
               {/* Trigger 区域 = 原来的 Header */}
               <CollapsibleTrigger asChild>
                 <div className="flex items-center gap-4 md:gap-6 mb-6 cursor-pointer">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-brand-purple rounded-full flex items-center justify-center text-white text-xl md:text-2xl flex-shrink-0">
+                  <div className="w-10 h-10 md:w-16 md:h-16 bg-brand-navy rounded-full flex items-center justify-center text-white text-xl md:text-2xl flex-shrink-0">
                     <FaUser />
                   </div>
 
@@ -136,14 +137,14 @@ export default function AccountPage() {
                       className="mb-2 text-xl md:text-2xl lg:text-3xl flex items-center"
                       as="h1"
                     >
-                      {user.fullName || user.username || "Welcome"}
+                      {user.username || "Welcome"}
                       <ChevronDown
                         className="pl-4 h-10 w-10 text-gray-500 transition-transform duration-300 data-[state=open]:rotate-180"
                       />
                     </Heading>
 
                     <p className="text-gray-600 text-sm md:text-base break-all">
-                      {user.primaryEmailAddress?.emailAddress}
+                      {user.address|| "No address set"}
                     </p>
                   </div>
 
@@ -179,7 +180,7 @@ export default function AccountPage() {
                 <div>
                   <Link
                     href="/account/profile"
-                    className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 md:gap-3 px-1 text-sm md:text-lg py-2 md:~py-2.5/3 from-brand-purple to-brand-lime text-white"
+                    className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 md:gap-3 px-1 text-sm md:text-lg py-2 md:~py-2.5/3 from-brand-navy to-brand-lime text-white"
                   >
                     <div className="flex size-5 md:size-6 items-center justify-center transition-transform group-hover:-rotate-[25deg] [&>svg]:h-full [&>svg]:w-full">
                       <FaPencil />
@@ -196,10 +197,10 @@ export default function AccountPage() {
 
 
           {/* Edit Address */}
-          <div className="bg-white rounded-lg shadow-md p-4 md:p-8 m-6">
+          <div className="bg-white rounded-lg p-4 md:p-8 m-6">
 
             <h2 className="text-lg md:text-xl font-semibold mb-6">
-              Shipping Address
+             Shipping Address
             </h2>
 
             <div className="p-4 bg-brand-gray rounded-lg mb-6">
@@ -219,7 +220,7 @@ export default function AccountPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   rows={4}
-                  className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                  className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy"
                   placeholder="Enter your shipping address..."
                 />
               )}
@@ -229,7 +230,7 @@ export default function AccountPage() {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-purple to-brand-lime text-white"
+                className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-navy to-brand-lime text-white"
               >
                 <FaPencil />
                 <span>Edit Address</span>
@@ -238,7 +239,7 @@ export default function AccountPage() {
               <div className="flex gap-20">
                 <button
                   onClick={handleSave}
-                  className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-purple to-brand-blue text-white"
+                  className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-navy to-brand-blue text-white"
                 >
                   <FaCheck />
                   Save
@@ -246,7 +247,7 @@ export default function AccountPage() {
 
                 <button
                   onClick={handleCancel}
-                  className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-purple to-brand-orange text-white"
+                  className="button-cutout group inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom gap-2 px-2 py-2 text-sm md:text-base from-brand-navy to-brand-orange text-white"
                 >
                   <FaTimes />
                   Cancel

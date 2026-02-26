@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CustomizerSelection } from "@/components/CustomizerSelection";
 import { Title } from '../app/(public)/products/others'
-import { addCustomDesignApi, addOrderApi,addCartApi } from "@/api/auth";
+import { addCustomDesignApi, addOrderApi, addCartApi } from "@/api/auth";
 import { toast } from "sonner"
 import { useAuth } from '@/contexts/auth-context';
 import { PayPalButtons } from "@paypal/react-paypal-js";
@@ -39,9 +39,9 @@ const getDefault = (str?: string) => {
 export function ProductItem({ idx, data, noScribble }: any): React.ReactElement | null {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
+
   const [formData, setFormData] = useState<any>(null); // 保存 CustomizerSelection 的 formData
   const userid = JSON.parse(localStorage.getItem('userInfo'))?.id;
-
   const scribbleColor = SCRIBBLE_COLORS[idx % SCRIBBLE_COLORS.length];
 
   // 初始化 formData，默认选中每个选项的第一个
@@ -49,7 +49,7 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
     p_size: getDefault(data.p_size),
     p_finish: getDefault(data.p_finish),
     p_flex: getDefault(data.p_flex),
-    p_textures: data.p_textures[data.asset.type_id]?.[0] || null,
+    p_img: data.p_textures[data.asset.asset_code]?.[0] || [],
     quantity: 1,
   });
 
@@ -64,47 +64,47 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
   // 加入购物车逻辑
   // --------------------------
   const onAddToCart = async (formData: any) => {
-  if (!formData) return;
+    if (!formData) return;
 
-  try {
-    // 1️⃣ 先生成 design
-    const res = await addCustomDesignApi({
-      product_id: data.id,
-      user_id: userid,
-      p_size: formData.p_size,
-      p_finish: formData.p_finish,
-      p_flex: formData.p_flex,
-      p_textures: formData.p_textures || [],
-    });
+    try {
+      // 1️⃣ 先生成 design
+      const res = await addCustomDesignApi({
+        product_id: data.id,
+        user_id: userid,
+        p_size: formData.p_size,
+        p_finish: formData.p_finish,
+        p_flex: formData.p_flex,
+        p_textures: formData.p_img || [],
+      });
 
-    console.log("Custom design added:", res);
+      console.log("Custom design added:", res);
 
-    if (res.code !== 200) {
-      toast.error("Failed to create design");
-      return;
+      if (res.code !== 200) {
+        toast.error("Failed to create design");
+        return;
+      }
+
+      const designId = res.data.id;
+
+      // 2️⃣ 添加到购物车
+      const cartRes = await addCartApi(
+        userid,
+        designId,
+        1, // 默认数量
+        data.price // ⚠️ 确保 product 有 price
+      );
+
+      if (cartRes.code === 200) {
+        toast.success("Added to cart successfully");
+      } else {
+        toast.error("Failed to add to cart");
+      }
+
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      toast.error("Something went wrong");
     }
-
-    const designId = res.data.id;
-
-    // 2️⃣ 添加到购物车
-    const cartRes = await addCartApi(
-      userid,
-      designId,
-      1, // 默认数量
-      data.price // ⚠️ 确保 product 有 price
-    );
-
-    if (cartRes.code === 200) {
-      toast.success("Added to cart successfully");
-    } else {
-      toast.error("Failed to add to cart");
-    }
-
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    toast.error("Something went wrong");
-  }
-};
+  };
 
   // --------------------------
   // 下单 / 支付逻辑
@@ -129,7 +129,7 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
         p_size: formData.p_size,
         p_finish: formData.p_finish,
         p_flex: formData.p_flex,
-        p_textures: formData.p_textures || [],
+        p_textures: formData.p_img || [],
       });
 
       if (designRes.code !== 200) {
@@ -195,10 +195,10 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
           />
         )}
 
-        {data.asset && data.p_textures?.[data.asset.type_id] && (
+        {data.asset && data.p_textures?.[data.asset.asset_code] && (
           <ProductModelCanvas
-            typeId={data.asset.type_id}
-            textureUrls={data.p_textures[data.asset.type_id] || []}
+            assetCode={data.asset.asset_code}
+            textureUrls={data.p_textures[data.asset.asset_code] || []}
             finish={data.asset.finish || 'matte'}
             orbitControls={false}
             className="w-full h-[350px] mx-auto origin-top transform-gpu transition-transform duration-500 ease-in-out group-hover:scale-150"

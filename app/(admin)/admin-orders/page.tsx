@@ -11,7 +11,7 @@ type OrderItem = {
   product: {
     id: number;
     name: string;
-    type_id?: string;
+    asset_code?: string;
     is_double_sided?: boolean;
   };
   quantity: number;
@@ -165,7 +165,6 @@ const OrderListPage = () => {
             )}
           </TableBody>
 
-          {/* 可选分页 footer */}
           {totalPages > 1 && (
             <TableFooter>
               <TableRow>

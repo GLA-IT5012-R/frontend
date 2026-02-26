@@ -29,14 +29,14 @@ export function ProductModelCanvas({
     camera_position = [2, 3, 4],
     orbitControls = true,
     type,
-    type_id,
+    asset_code,
     texture_urls,
     className,
     style,
     ...data
 }: any): React.ReactElement {
 
-    console.log(texture_urls, type_id)
+    console.log(texture_urls, asset_code)
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas style={{ width: '100%', height: '100%' }}
@@ -60,8 +60,8 @@ export function ProductModelCanvas({
                     <color attach="background" args={[ENVIRONMENT_COLOR]} />
                     <StageFloor />
                     <ProductModel
-                        textureUrls={texture_urls[`${type_id}`] || []}
-                        typeId={type_id}
+                        textureUrls={texture_urls[`${asset_code}`] || []}
+                        typeId={asset_code}
 
                     />
                 </Suspense>

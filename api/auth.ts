@@ -114,7 +114,7 @@ export const addProductApi = (data: {
   p_size?: string;       // 尺寸，例如 "160,143,123"
   p_finish?: string;     // 工艺，例如 "matte,glossy"
   p_desc?: string;       // 产品描述
-  type_id: string;       // 关联单品资源 type_id
+  asset_code: string;       // 关联单品资源 asset_code
 }) => http.post(api.addProducts, data);
 
 

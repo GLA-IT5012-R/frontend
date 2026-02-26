@@ -7,7 +7,7 @@ export type TextureUrls = {
 export type Asset = {
   id: number;
   type: string;
-  type_id: string;
+  asset_code: string;
   type_name: string;
   name: string;
   desc: string;
@@ -41,7 +41,7 @@ export const products: ProductData = {
       asset: {
         id: 4,
         type: "snowboard",
-        type_id: "SB-001",
+        asset_code: "SB-001",
         type_name: "雪板",
         name: "Burton Custom X",
         desc: "适合进阶滑手，高性能雪板",
@@ -62,7 +62,7 @@ export const products: ProductData = {
       asset: {
         id: 5,
         type: "snowboard",
-        type_id: "SB-002",
+        asset_code: "SB-002",
         type_name: "雪板",
         name: "Lib Tech T.Rice Pro",
         desc: "自由式与全能雪板的最佳选择",
@@ -83,7 +83,7 @@ export const products: ProductData = {
       asset: {
         id: 6,
         type: "snowboard",
-        type_id: "SB-003",
+        asset_code: "SB-003",
         type_name: "雪板",
         name: "Ride Warpig",
         desc: "短板、高反应，适合公园和全地形",

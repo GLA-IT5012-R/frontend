@@ -14,30 +14,29 @@ const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> =
 }
 
 interface CustomizerCanvasProps {
-    assetCode: string
-    textureUrls: string[] | undefined
+    typeId: string
+    textureUrl: string
     finish?: string
     customText?: string
+    /** When false, the second side (material2) uses black; when true, both sides use texture. */
     isDoubleSided?: boolean
-    // canvas params
     position?: [number, number, number]
     orbitControls?: boolean
     className?: string
     style?: React.CSSProperties
 }
 
-export function CustomizerCanvas({
-    position = [2, 3, 4],
+export function CartConvas({
+    position = [2, 3.5, 4],
     orbitControls = true,
-    assetCode,
-    textureUrls,
+    typeId,
+    textureUrl,
     finish = 'matte',
     customText = '',
     isDoubleSided = true,
     className,
     style,
 }: CustomizerCanvasProps) {
-
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
             <Canvas shadows camera={{ position, fov: 55 }} style={{ width: '100%', height: '100%' }}>
@@ -66,8 +65,8 @@ export function CustomizerCanvas({
 
                     {/* MODEL */}
                     <ProductModel
-                        assetCode={assetCode}
-                        textureUrls={textureUrls}
+                        typeId={typeId}
+                        textureUrl={textureUrl}
                         finish={finish}
                         customText={customText}
                         isDoubleSided={isDoubleSided}
@@ -86,8 +85,8 @@ export function CustomizerCanvas({
 }
 
 interface ProductModelProps {
-    textureUrls: string[] | undefined
-    assetCode: string
+    textureUrl: string
+    typeId: string
     finish?: string
     customText?: string
     isDoubleSided?: boolean
@@ -129,7 +128,7 @@ function createTextTexture(text: string): THREE.CanvasTexture | null {
     return tex
 }
 
-export function ProductModel({ textureUrls, assetCode, finish = 'matte', customText = '', isDoubleSided = true }: ProductModelProps) {
+function ProductModel({ textureUrl, typeId, finish = 'matte', customText = '', isDoubleSided = true }: ProductModelProps) {
     const { nodes } = useGLTF('/models/snowboard.glb') as any
     const { nodes: sharpNodes } = useGLTF('/models/snowboard_sharp.glb') as any
     const testTexture = useTexture(['/textures/test.png'])
@@ -138,7 +137,7 @@ export function ProductModel({ textureUrls, assetCode, finish = 'matte', customT
        TEXTURE
     ======================= */
 
-    const textures = useTexture(textureUrls || [])
+    const textures = useTexture(textureUrl ? [textureUrl] : [])
 
     useMemo(() => {
         textures.forEach(setupTexture)
@@ -180,7 +179,7 @@ export function ProductModel({ textureUrls, assetCode, finish = 'matte', customT
     ======================= */
 
     const groupNodes = useMemo(() => {
-        switch (assetCode) {
+        switch (typeId) {
             case 'SB-001':
                 return [
                     nodes.snowboard_camber_1,
@@ -211,7 +210,7 @@ export function ProductModel({ textureUrls, assetCode, finish = 'matte', customT
             default:
                 return []
         }
-    }, [assetCode, nodes, sharpNodes])
+    }, [typeId, nodes, sharpNodes])
 
     /* =======================
        CUSTOM TEXT DECAL

@@ -1,3 +1,16 @@
+# Snowboard Craft - Frontend (Next.js & Three.js)
+
+## 1. Project Overview
+Snowboard Craft is a high-performance Direct-to-Consumer (DTC) e-commerce platform. This frontend is built with Next.js 15 (App Router) and TypeScript, providing an immersive 3D customization experience for bespoke snowboards
+
+**Key Technical Highlights**
+
+- 3D Interactive Customizer: Powered by Three.js (via React Three Fiber), allowing real-time visualization of snowboard models.
+- Headless Architecture: Completely decoupled from the Django REST API to ensure a polished Single Page Application (SPA) feel.
+- Authentication: Integrated with Clerk for secure social login and user management.
+- Responsive UI: Built with Tailwind CSS using a mobile-first approach.
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { uploadTextureApi } from "@/api/auth";
@@ -19,17 +19,18 @@ interface ProductCustomizationFormProps {
   data: any;
   formData: any;
   /** 用户上传的纹理 URL，单独保存以便切回预设后仍可回显与再次选择 */
+  presetTextures?: string[];
   uploadedTextureUrl?: string | null;
   onChange: (field: string, value: any) => void;
 }
 
-export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = null, onChange }: ProductCustomizationFormProps) {
+export function ProductCustomizationForm({ data, formData, presetTextures, uploadedTextureUrl = null, onChange }: ProductCustomizationFormProps) {
   const sizes = data.p_size?.split(",") || [];
   const finishes = data.p_finish?.split(",") || [];
   const flexes = data.p_flex?.split(",") || [];
-  const textures = data.p_textures || {};
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
 
   const handleChange = (field: string, value: any) => {
     onChange(field, value);
@@ -49,7 +50,7 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
         const url = res.data?.url;
 
         if (url) {
-          handleChange("p_textures", url);
+          handleChange("p_img", url);
           toast.success("Texture uploaded successfully");
         } else {
           setUploadError("Upload succeeded but no URL returned.");
@@ -136,15 +137,21 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                 <FieldLabel>{LABELS.TEXTURE}</FieldLabel>
                 <FieldDescription>Select a texture or upload your own image</FieldDescription>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {(Object.entries(textures) as [string, string[]][]).map(([key, urls]) => (
+                  {presetTextures && presetTextures.map((url: any) => (
                     <button
-                      key={key}
+                      key={`${url}-texture`}
                       type="button"
-                      className={`w-16 h-16 rounded-full border-2 overflow-hidden ${formData?.p_textures === key ? "border-blue-500" : "border-gray-300"
+                      className={`w-16 h-16 rounded-full border-3 overflow-hidden ${formData?.p_img === url
+                        ? "border-blue-500"
+                        : "border-gray-300"
                         }`}
-                      onClick={() => handleChange("p_textures", key)}
+                      onClick={() => handleChange("p_img", url)}
                     >
-                      <img src={urls[0]} alt={key} className="w-full h-full object-cover" />
+                      <img
+                        src={url}
+                        alt="texture"
+                        className="w-full h-full object-cover"
+                      />
                     </button>
                   ))}
 
@@ -152,9 +159,9 @@ export function ProductCustomizationForm({ data, formData, uploadedTextureUrl = 
                   {uploadedTextureUrl && (
                     <button
                       type="button"
-                      className={`w-16 h-16 rounded-full border-2 overflow-hidden shrink-0 ${formData?.p_textures === uploadedTextureUrl ? "border-blue-500" : "border-gray-300"
+                      className={`w-16 h-16 rounded-full border-3 overflow-hidden shrink-0 ${formData?.p_img === uploadedTextureUrl ? "border-brand-lime" : "border-gray-300"
                         }`}
-                      onClick={() => handleChange("p_textures", uploadedTextureUrl)}
+                      onClick={() => handleChange("p_img", uploadedTextureUrl)}
                     >
                       <img
                         src={uploadedTextureUrl}

@@ -14,7 +14,7 @@ const FINISH_OPTIONS: Record<string, { roughness: number; metalness: number }> =
 }
 
 interface CustomizerCanvasProps {
-    typeId: string
+    assetCode: string
     textureUrl: string
     finish?: string
     customText?: string
@@ -29,7 +29,7 @@ interface CustomizerCanvasProps {
 export function OrderConvas({
     position = [2, 3, 4],
     orbitControls = true,
-    typeId,
+    assetCode,
     textureUrl,
     finish = 'matte',
     customText = '',
@@ -65,7 +65,7 @@ export function OrderConvas({
 
                     {/* MODEL */}
                     <ProductModel
-                        typeId={typeId}
+                        assetCode={assetCode}
                         textureUrl={textureUrl}
                         finish={finish}
                         customText={customText}
@@ -86,7 +86,7 @@ export function OrderConvas({
 
 interface ProductModelProps {
     textureUrl: string
-    typeId: string
+    assetCode: string
     finish?: string
     customText?: string
     isDoubleSided?: boolean
@@ -128,7 +128,7 @@ function createTextTexture(text: string): THREE.CanvasTexture | null {
     return tex
 }
 
-function ProductModel({ textureUrl, typeId, finish = 'matte', customText = '', isDoubleSided = true }: ProductModelProps) {
+function ProductModel({ textureUrl, assetCode, finish = 'matte', customText = '', isDoubleSided = true }: ProductModelProps) {
     const { nodes } = useGLTF('/models/snowboard.glb') as any
     const { nodes: sharpNodes } = useGLTF('/models/snowboard_sharp.glb') as any
     const testTexture = useTexture(['/textures/test.png'])
@@ -138,10 +138,9 @@ function ProductModel({ textureUrl, typeId, finish = 'matte', customText = '', i
     ======================= */
 
     const textures = useTexture(textureUrl ? [textureUrl] : [])
-
     useMemo(() => {
-        textures.forEach(setupTexture)
         testTexture.forEach(setupTexture)
+        textures.forEach(setupTexture)
 
     }, [textures, testTexture])
 
@@ -179,7 +178,7 @@ function ProductModel({ textureUrl, typeId, finish = 'matte', customText = '', i
     ======================= */
 
     const groupNodes = useMemo(() => {
-        switch (typeId) {
+        switch (assetCode) {
             case 'SB-001':
                 return [
                     nodes.snowboard_camber_1,
@@ -210,7 +209,7 @@ function ProductModel({ textureUrl, typeId, finish = 'matte', customText = '', i
             default:
                 return []
         }
-    }, [typeId, nodes, sharpNodes])
+    }, [assetCode, nodes, sharpNodes])
 
     /* =======================
        CUSTOM TEXT DECAL

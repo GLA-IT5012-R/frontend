@@ -20,10 +20,6 @@ import {
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
-    DrawerDescription,
-    DrawerTrigger,
-    DrawerFooter,
-    DrawerClose,
 } from "@/components/ui/drawer";
 import { OrderConvas } from "./OrderCanvas";
 import { X } from "lucide-react";
@@ -114,7 +110,7 @@ export default function AccountPage() {
                     {/* Order History */}
                     <div className="bg-white rounded-lg shadow-md p-4 md:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <FaBox className="text-brand-purple text-xl md:text-2xl" />
+                            <FaBox className="text-brand-blue text-xl md:text-2xl" />
                             <Heading className="text-xl md:text-2xl" as="h2">
                                 Order History
                             </Heading>
@@ -178,7 +174,7 @@ export default function AccountPage() {
                                         {/* Content */}
                                         <CollapsibleContent className="px-4 pt-2">
                                             <div className="grid gap-3 mt-2">
-                                                {order.items.map((item,idx) => (
+                                                {order.items.map((item, idx) => (
                                                     <div
                                                         key={item.order_item_id}
                                                         onClick={() => {
@@ -207,10 +203,6 @@ export default function AccountPage() {
                                                     </div>
                                                 ))}
                                             </div>
-
-                                            {/* <div className="mt-3 text-sm text-brand-purple font-semibold">
-                                                View invoice →
-                                            </div> */}
                                         </CollapsibleContent>
                                     </Collapsible>
                                 ))}
@@ -220,7 +212,7 @@ export default function AccountPage() {
 
                     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right" dismissible={false}>
 
-                        <DrawerContent className="w-[60vw] p-6">
+                        <DrawerContent className="sm:w-[60vw] w-full p-6">
                             <button
                                 onClick={() => setDrawerOpen(false)}
                                 className="absolute top-4 right-4 p-2 rounded hover:bg-gray-200"
@@ -230,10 +222,10 @@ export default function AccountPage() {
                             {selectedItem && (
                                 <>
                                     <DrawerHeader>
-                                         <DrawerTitle>
+                                        <DrawerTitle>
                                             {/* {selectedItem.product?.name || "Custom Snowboard"} */}
                                         </DrawerTitle>
-                                       {/* <DrawerDescription>
+                                        {/* <DrawerDescription>
                                         </DrawerDescription> */}
 
                                     </DrawerHeader>
@@ -247,7 +239,7 @@ export default function AccountPage() {
                                             <span className="text-sm">
                                                 {selectedItem.quantity} × £{selectedItem.unit_price} ={" "}
                                                 <span className="font-bold text-green-600">
-                                                   
+
                                                     £{(Number(selectedItem.unit_price) * selectedItem.quantity).toFixed(2)}
                                                 </span>
                                             </span>
@@ -257,7 +249,7 @@ export default function AccountPage() {
                                         <div className="w-full h-64">
                                             {/* 这里替换成你的 Canvas 组件，比如 R3F */}
                                             <OrderConvas
-                                                typeId={selectedItem?.product?.type_id || ""}
+                                                assetCode={selectedItem?.product?.asset_code || ""}
                                                 finish={selectedItem?.p_finish || ""}
                                                 textureUrl={selectedItem?.design.p_textures}
                                                 isDoubleSided={selectedItem.product?.is_double_sided}
