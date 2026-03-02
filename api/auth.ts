@@ -249,3 +249,8 @@ export const addReviewApi = (data: {
   product_id: number;
   user_id: number;
 }) => http.post(api.addreview, data);
+
+// 评论 结果
+export const getReviewStatsApi = () => {
+  return http.get(api.reviewStats);
+};

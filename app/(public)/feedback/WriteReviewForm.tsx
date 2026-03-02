@@ -149,7 +149,7 @@ export function WriteReviewForm({
                     onChange={(e) => setComment(e.target.value)}
                     placeholder={placeholders[pidx]}
                     rows={4}
-                    className="w-full px-3 py-2.5 text-sm text-zinc-100 rounded bg-zinc-900 border border-zinc-800 resize-none outline-none focus:ring-1 focus:ring-blue-500/40 transition-all placeholder:text-zinc-700 placeholder:italic italic"
+                    className="w-full px-3 py-2.5 text-sm text-zinc-100 rounded border border-zinc-800 resize-none outline-none focus:ring-1 focus:ring-blue-500/40 transition-all placeholder:text-zinc-700 placeholder:italic italic"
                 />
                 <div className="text-right">
                     <span className="text-[0.6rem] text-zinc-700">{comment.length} chars</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { getReviewListApi ,getProductSelectListApi} from "@/api/auth"; // 根据你的路径调整
+import { getReviewListApi, getProductSelectListApi, getReviewStatsApi } from "@/api/auth";
 
 import { WriteReviewForm } from "./WriteReviewForm";
 import { InfiniteCarousel } from "./InfiniteCarousel";
@@ -38,9 +38,9 @@ export default function ReviewPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const fetchProductlist=()=>{
-    getProductSelectListApi().then((res)=>{
-      if(res.code===200){
+  const fetchProductlist = () => {
+    getProductSelectListApi().then((res) => {
+      if (res.code === 200) {
         // console.log('product list for review select:',res.data);
         setproductList(res.data);
       }
@@ -69,7 +69,7 @@ export default function ReviewPage() {
   // ─── 首次加载 ──────────────────────────────────────────────────────
   useEffect(() => {
     fetchReviews(1, filter);
-    fetchProductlist()  
+    fetchProductlist()
   }, [fetchReviews, filter]);
 
   // ─── 星级筛选 ──────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ export default function ReviewPage() {
           <aside className="md:sticky md:top-24 space-y-6">
             {reviews.length > 0 && (
               <div className="p-5 rounded border border-brand-navy">
-                <p className="text-[0.8rem] uppercase tracking-widest text-brand-navy mb-4">
+                <p className="text-[0.8rem] uppercase tracking-widest text-zinc-500  mb-4">
                   Overall Rating
                 </p>
                 <RatingStats reviews={reviews} />
@@ -106,7 +106,7 @@ export default function ReviewPage() {
             )}
 
             <div className="p-5 rounded border border-brand-navy">
-              <p className="text-[0.8rem] uppercase tracking-widest text-brand-navy mb-4">
+              <p className="text-[0.8rem] uppercase tracking-widest text-zinc-500  mb-4">
                 Drop Your Review
               </p>
               <WriteReviewForm
@@ -203,28 +203,56 @@ function ReviewGrid({ reviews }: { reviews: Review[] }) {
     </div>
   );
 }
+interface RatingDist {
+  star: number;
+  count: number;
+  pct: number;
+}
 
+interface ReviewStatsData {
+  rating_counts: Record<string, number>; // {"1": 2, "2": 3, ...}
+  total_score: number;
+  total_reviews: number;
+  average_score: number;
+}
 // ─── Rating Stats ─────────────────────────────────────────────────────
 function RatingStats({ reviews }: { reviews: Review[] }) {
-  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  const [stats, setStats] = useState<ReviewStatsData | null>(null);
 
-  const dist = [5, 4, 3, 2, 1].map((star) => {
-    const count = reviews.filter((r) => r.rating === star).length;
+  useEffect(() => {
+    getReviewStatsApi()
+      .then((res) => {
+        if (res.code === 200) {
+          setStats(res.data);
+        }
+      })
+      .catch(() => {
+        console.error("Failed to fetch review stats");
+      });
+  }, []);
+
+  if (!stats) return <p className="text-[0.6rem] text-zinc-600 w-4">Loading...</p>;
+
+  const { total_reviews, average_score, rating_counts } = stats;
+
+  // 构造分布数组 5→1
+  const dist: RatingDist[] = [5, 4, 3, 2, 1].map((star) => {
+    const count = rating_counts[star.toString()] || 0;
     return {
       star,
       count,
-      pct: (count / reviews.length) * 100,
+      pct: total_reviews ? (count / total_reviews) * 100 : 0,
     };
   });
-
   return (
     <div className="flex gap-6 items-start">
       <div className="flex-shrink-0 text-center">
-        <div className="text-5xl font-bold text-blue-400 leading-none">{avg.toFixed(1)}</div>
+        <div className="text-5xl font-bold text-blue-400 leading-none">{average_score.toFixed(1)}</div>
         <div className="mt-1.5">
-          <StarRating value={Math.round(avg)} readonly size={14} />
+          <StarRating value={Math.round(average_score)} readonly size={14} />
         </div>
-        <p className="text-[0.6rem] uppercase tracking-widest text-zinc-600 mt-2">{reviews.length} reviews</p>
+        <p className="text-[0.6rem] uppercase tracking-widest text-zinc-600 mt-2">{total_reviews} reviews</p>
+        <p className="text-[0.6rem] text-zinc-500 mt-1">Total score: {stats.total_score}</p>
       </div>
 
       <div className="flex-1 space-y-1.5">

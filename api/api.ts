@@ -27,6 +27,7 @@ export const api: any = {
     reviewList:'/reviews/list',
     proSelectList:'/reviews/products',
     addreview:'/reviews/add',
+    reviewStats:'/reviews/score'
     // 管理端接口
 
 };
