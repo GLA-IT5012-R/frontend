@@ -39,9 +39,9 @@ export function CartConvas({
 }: CustomizerCanvasProps) {
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
-            <Canvas shadows camera={{ position, fov: 55 }} style={{ width: '100%', height: '100%' }}>
+            <Canvas frameloop="demand" shadows camera={{ position, fov: 55 }} style={{ width: '100%', height: '100%' }}>
                 <Suspense fallback={null}>
-                    <Environment files="/hdr/warehouse-512.hdr" environmentIntensity={0.6} />
+                    <Environment files="/hdr/warehouse-256.hdr" environmentIntensity={0.6} />
 
                     <directionalLight
                         castShadow

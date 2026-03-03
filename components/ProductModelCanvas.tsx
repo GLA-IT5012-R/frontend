@@ -40,12 +40,16 @@ export function ProductModelCanvas({
 
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
-            <Canvas style={{ width: '100%', height: '100%' }}
+            <Canvas frameloop="demand" style={{ width: '100%', height: '100%' }}
                 camera={{ position: position, fov: 55 }}>
-                <Suspense fallback={null}>
+                <Suspense fallback={
+                    <mesh visible={false}>
+                        <planeGeometry args={[1, 1]} />
+                        <meshBasicMaterial color="#fff" opacity={0} /> {/* Tailwind bg-gray-200 */}
+                    </mesh>}>
                     {/* <Environment preset="city" /> */}
                     <Environment
-                        files={"/hdr/warehouse-512.hdr"}
+                        files={"/hdr/warehouse-256.hdr"}
                         environmentIntensity={0.6}
                     />
                     <directionalLight
@@ -69,7 +73,7 @@ export function ProductModelCanvas({
 }
 
 
-export function ProductModel({ textureUrls, assetCode ,finish = 'matte'}: ProductModelInnerProps) {
+export function ProductModel({ textureUrls, assetCode, finish = 'matte' }: ProductModelInnerProps) {
     const { nodes } = useGLTF('/models/snowboard.glb')
     const { nodes: nodes2 } = useGLTF('/models/snowboard_sharp.glb')
     // 根据 textureUrls 动态生成 texture

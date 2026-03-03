@@ -60,9 +60,10 @@ export function CustomizerSelection({
 
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[600px] border border-gray-200 rounded-lg overflow-hidden">
+    <div className="relative flex flex-col lg:flex-row w-full min-h-[400px] border border-gray-200 rounded-lg overflow-hidden">
+      
       {/* Left: 3D Model Canvas */}
-      <div className="w-full lg:w-1/2 bg-gray-50 h-[500px] lg:h-auto relative shrink-0">
+      <div className=" w-full lg:w-1/2 h-[400px] lg:h-auto relative shrink-0">
         {data.asset && (presetTextures || textureUrlsForCanvas.length > 0) && (
           <CustomizerCanvas
             assetCode={data.asset.asset_code}

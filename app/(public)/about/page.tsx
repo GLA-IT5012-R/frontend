@@ -118,7 +118,7 @@ function DocSection({ section }: { section: Section }) {
           >
             <AccordionTrigger className="group flex items-center gap-4 py-5 text-left hover:no-underline [&>svg]:ml-auto [&>svg]:text-[#4a5568] [&[data-state=open]>svg]:text-brand-navy">
               <span
-                className="f text-base tracking-wider text-[#4a5568] min-w-[28px] transition-colors duration-200 group-hover:text-brand-navy group-[[data-state=open]]:text-brand-navy"
+                className="text-base tracking-wider text-[#4a5568] min-w-[28px] transition-colors duration-200 group-hover:text-brand-navy group-[[data-state=open]]:text-brand-navy"
               >
                 {String(idx + 1).padStart(2, "0")}
               </span>
@@ -203,7 +203,7 @@ export default function AboutPage() {
           {aboutData.hero.tagline}
         </p>
 
-        <p className="mt-10 max-w-xl text-gray-800 italic leading-relaxed text-sm md:text-sm lg:text-2xl font-[var(--font-dm-mono)]">
+        <p className="mt-10 max-w-xl text-gray-800 italic leading-relaxed text-sm md:text-sm lg:text-2xl ">
           {aboutData.hero.subtitle}
         </p>
 
@@ -230,7 +230,7 @@ export default function AboutPage() {
             }}
           >
             <div
-              className="text-brand-navy leading-none text-5xl"
+              className="text-brand-navy leading-none text-5xl "
             >
               {stat.value}
             </div>

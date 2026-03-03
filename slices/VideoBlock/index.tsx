@@ -51,8 +51,9 @@ const VideoBlock = ({ slice }: VideoBlockProps): JSX.Element => {
           ) : null}
           {/* Texture overlay */}
           <Image
-            src="/image-texture.webp"
-            alt=""
+            loading="lazy"
+            src="/bg-texture.webp"
+            alt="Carbon fiber snowboard 3D preview: rotatable view to adjust board texture, size, and bindings"
             fill
             className="pointer-events-none object-cover opacity-50"
           />

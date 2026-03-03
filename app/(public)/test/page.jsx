@@ -247,7 +247,7 @@ export default function Home() {
       <RippleRings isListening={isListening} />
 
       {/* R3F Canvas */}
-      <Canvas camera={{ position: [0, 0, 4] }} style={{ position: "absolute", inset: 0 }}>
+      <Canvas frameloop="demand" camera={{ position: [0, 0, 4] }} style={{ position: "absolute", inset: 0 }}>
         <ambientLight intensity={0.3} />
         <pointLight position={[0, 0, 3]} intensity={1} color="#88ccff" />
         <AudioSphere getVolume={getVolume} getBands={getBands} isListening={isListening} />

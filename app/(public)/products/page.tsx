@@ -114,8 +114,8 @@ const Products = () => {
   };
 
   return (
-    <Bounded className="bg-texture bg-brand-gray">
-      <div className="mt-20">
+    <Bounded className="bg-texture bg-brand-yellow">
+      <div className="mt-20 ">
         {/* <Heading className="text-center ~mb-4/6" as="h2">
           All Products
         </Heading> */}

@@ -30,8 +30,6 @@ export function Header() {
         { label: 'Products', href: '/products' },
         { label: 'About', href: '/about' },
         { label: 'Review', href: '/feedback' },
-        
-
     ];
 
     /***** end clerk */
@@ -112,7 +110,7 @@ export function Header() {
                     <SignedIn>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <span className='cursor-pointer text-lg'>Hi,&nbsp;{firstName}</span>
+                                <span  role="button" className='cursor-pointer text-lg'>Hi,&nbsp;{firstName}</span>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
@@ -151,9 +149,9 @@ export function Header() {
                         className="relative w-8 h-8 flex flex-col justify-center gap-1.5"
                         aria-label="Toggle menu"
                     >
-                        <span className={`block h-1 w-7 bg-brand-purple transition ${isMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`}></span>
-                        <span className={`block h-1 w-7 bg-brand-purple transition ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-                        <span className={`block h-1 w-7 bg-brand-purple transition ${isMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`}></span>
+                        <span className={`block h-1 w-7 bg-brand-navy transition ${isMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`}></span>
+                        <span className={`block h-1 w-7 bg-brand-navy transition ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+                        <span className={`block h-1 w-7 bg-brand-navy transition ${isMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`}></span>
                     </button>
                 </div>
             </div>

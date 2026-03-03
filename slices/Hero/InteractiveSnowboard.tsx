@@ -24,10 +24,16 @@ export function InteractiveSnowboard() {
   return (
     <div className="absolute inset-0 flex items-center justify-center ">
       <Canvas
+        frameloop="demand"
         className="min-h-[60rem] w-full bg"
         camera={{ position: INITIAL_CAMERA_POSITION, fov: 60, near: 0.001, far: 100000 }}
       >
-        <Suspense fallback={null}>
+        <Suspense fallback={
+          <mesh visible={false}>
+          <planeGeometry args={[1,1]} />
+          <meshBasicMaterial color="#fff" opacity={0}/> {/* Tailwind bg-gray-200 */}
+        </mesh>}
+        >
           <Scene />
         </Suspense>
       </Canvas>
@@ -109,7 +115,7 @@ function Scene() {
       jumpTrick(board, origin); // 小跳跃动作
     }
   }
-  
+
   // 前压/后仰动作（Carve）
   function carve(board: THREE.Group) {
     jumpBoard(board);
@@ -160,7 +166,7 @@ function Scene() {
   return (
     <group>
       <Environment preset="city" environmentIntensity={0.15} />
-      <ambientLight intensity={3.5}/>
+      <ambientLight intensity={3.5} />
       {/* <directionalLight
         castShadow
         position={[0,4,0]}
@@ -170,7 +176,7 @@ function Scene() {
       /> */}
 
       {/* <Environment
-        files={"/hdr/warehouse-512.hdr"}
+        files={"/hdr/warehouse-256.hdr"}
         environmentIntensity={0.6}
       /> */}
       <group ref={originRef}>

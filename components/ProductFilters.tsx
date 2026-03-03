@@ -65,6 +65,7 @@ export default function ProductFilters({
 
                 {/* 类型筛选 */}
                 <Select
+                    aria-label="Filter by type"
                     value={selectedType}
                     onValueChange={(value) => setSelectedType(value)}
                 >

@@ -136,7 +136,10 @@ export function ProductCustomizationForm({ data, formData, presetTextures, uploa
               <Field>
                 <FieldLabel>{LABELS.TEXTURE}</FieldLabel>
                 <FieldDescription>Select a texture or upload your own image</FieldDescription>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2"
+                  aria-labelledby="texture-label"
+                  aria-describedby="texture-desc"
+                >
                   {presetTextures && presetTextures.map((url: any) => (
                     <button
                       key={`${url}-texture`}
@@ -146,6 +149,7 @@ export function ProductCustomizationForm({ data, formData, presetTextures, uploa
                         : "border-gray-300"
                         }`}
                       onClick={() => handleChange("p_img", url)}
+                      aria-label={`Select texture ${url}`}
                     >
                       <img
                         src={url}
@@ -162,6 +166,7 @@ export function ProductCustomizationForm({ data, formData, presetTextures, uploa
                       className={`w-16 h-16 rounded-full border-3 overflow-hidden shrink-0 ${formData?.p_img === uploadedTextureUrl ? "border-brand-lime" : "border-gray-300"
                         }`}
                       onClick={() => handleChange("p_img", uploadedTextureUrl)}
+                      aria-label="Select uploaded texture"
                     >
                       <img
                         src={uploadedTextureUrl}
@@ -174,6 +179,7 @@ export function ProductCustomizationForm({ data, formData, presetTextures, uploa
                   <label
                     className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${uploading ? "border-gray-200 bg-gray-50 cursor-not-allowed" : "border-gray-300 hover:border-gray-400"
                       }`}
+                    aria-label="Upload a custom texture"
                   >
                     <input
                       type="file"
@@ -181,6 +187,7 @@ export function ProductCustomizationForm({ data, formData, presetTextures, uploa
                       className="hidden"
                       disabled={uploading}
                       onChange={handleUpload}
+
                     />
                     <span className="text-xs text-gray-500">
                       {uploading ? "..." : "Upload"}

@@ -232,8 +232,8 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
 
           <DrawerContent className="w-[90vw]" >
             <DrawerHeader>
-              <DrawerTitle>Customizer Modal</DrawerTitle>
-              <DrawerDescription>Configure your snowboard!</DrawerDescription>
+              <DrawerTitle>Customizer Modal <span className="text-[0.75rem] font-light">(Drag with mouse to rotate model, scroll to zoom, click texture buttons to change board surface material)</span></DrawerTitle>
+              <DrawerDescription>Configure your snowboard! </DrawerDescription>
             </DrawerHeader>
             <div className="w-full no-scrollbar overflow-y-auto px-4">
               <CustomizerSelection

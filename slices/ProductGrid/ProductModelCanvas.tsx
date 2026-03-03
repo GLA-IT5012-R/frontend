@@ -39,12 +39,16 @@ export function ProductModelCanvas({
     console.log(texture_urls, asset_code)
     return (
         <div style={style} className={clsx("bg-transparent", className)}>
-            <Canvas style={{ width: '100%', height: '100%' }}
+            <Canvas frameloop="demand"
+                style={{ width: '100%', height: '100%' }}
                 camera={{ position: camera_position, fov: 55 }}>
 
                 {/* <ambientLight intensity={1.5} /> */}
                 {/* <directionalLight position={[0, 5, 6]} intensity={5} color={'#ccc'} /> */}
-                <Suspense fallback={null}>
+                <Suspense fallback={<mesh visible={false}>
+                    <planeGeometry args={[1, 1]} />
+                    <meshBasicMaterial color="#fff" /> {/* Tailwind bg-gray-200 */}
+                </mesh>}>
                     {/* <Environment preset="city" /> */}
                     <Environment
                         files={"/hdr/warehouse-512.hdr"}
