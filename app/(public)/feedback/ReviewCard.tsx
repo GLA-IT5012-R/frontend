@@ -1,5 +1,12 @@
 import { StarRating } from "./StarRating";
-
+interface Review {
+  id: number;
+  user: { username: string };
+  product: { id: number; name: string };
+  rating: number;
+  comment: string;
+  created_at: string;
+}
 
 export function ReviewCard({ review, className = "" }: { review: Review; className?: string }) {
     const initials = review.user.username.slice(0, 2).toUpperCase();
