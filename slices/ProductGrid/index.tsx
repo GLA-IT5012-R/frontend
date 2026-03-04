@@ -13,7 +13,7 @@ import { ProductItem } from "@/components/ProductItem";
 
 
 const ProductGrid = ({ slice }: { slice: ProductGridSlice }) => {
-  const [hotList, setHotList] = useState([]);
+  const [hotList, setHotList] = useState<any[]>([]);
 
   useEffect(() => {
     getProducts({ page_size: 4 })
