@@ -39,7 +39,7 @@ export default function ReviewPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchProductlist = () => {
-    getProductSelectListApi().then((res) => {
+    getProductSelectListApi().then((res: any) => {
       if (res.code === 200) {
         // console.log('product list for review select:',res.data);
         setproductList(res.data);
@@ -221,7 +221,7 @@ function RatingStats({ reviews }: { reviews: Review[] }) {
 
   useEffect(() => {
     getReviewStatsApi()
-      .then((res) => {
+      .then((res: any) => {
         if (res.code === 200) {
           setStats(res.data);
         }

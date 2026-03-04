@@ -17,7 +17,7 @@ const ProductGrid = ({ slice }: { slice: ProductGridSlice }) => {
 
   useEffect(() => {
     getProducts({ page_size: 4 })
-      .then((res) => {
+      .then((res:any) => {
         if (res.code === 200) setHotList(res.data.list || []);
       })
       .catch(console.error);
