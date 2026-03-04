@@ -108,16 +108,15 @@ export function WriteReviewForm({
                 </label>
                 <Combobox
                     items={products}
-                    itemToStringLabel={(product) => product?.name ?? ""}   // ⭐ 改这里
-                    isItemEqualToValue={(a, b) => a.id === b.id}           // ⭐ 很重要
-                    onValueChange={(product) => {
+                    itemToStringLabel={(product: Product) => product?.name ?? ""}   // ⭐ 改这里
+                    isItemEqualToValue={(a: Product, b: Product) => a.id === b.id}           // ⭐ 很重要
+                    onValueChange={(product: Product | null) => {
                         if (!product) {
                             onProductChange("")
                             return
                         }
                         onProductChange(product.id)   // ✅ 这里才是关键
                     }}
-
                 >
                     <ComboboxInput placeholder="Select a product name" />
 
