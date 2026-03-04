@@ -14,7 +14,7 @@ export function Bounded({
   className,
   children,
   ...restProps
-}: BoundedProps) {
+}: any) {
   return (
     <Comp
       className={clsx(
