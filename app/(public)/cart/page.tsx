@@ -21,6 +21,11 @@ interface Customisation {
 interface CartItem {
   cart_item_id: number;
   design: Customisation;
+  product: {
+    id: number;
+    asset_code: string;
+    is_double_sided: boolean;
+  };
   quantity: number;
   unit_price: string;
   created_at: string;
@@ -33,7 +38,7 @@ const Cart = () => {
 
   const fetchCart = async () => {
     try {
-      const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
+      const userId = JSON.parse(localStorage.getItem("userInfo") || '{}').id;
       userIdRef.current = userId;
       const res: any = await getUserCartApi(userId);
       if (res.code === 200) {
@@ -139,7 +144,7 @@ const Cart = () => {
       // })
       // debugger
       // 4️⃣ 调用订单接口
-      const orderRes = await addOrderApi({
+      const orderRes: any = await addOrderApi({
         user_id: userId,
         total_price: totalPrice,
         order_status: "Pending",
@@ -151,7 +156,7 @@ const Cart = () => {
       if (orderRes.code === 200) {
         toast.success("Order created successfully!");
         await removeItems(selectedItems);
-        
+
       } else {
         toast.error("Order creation failed");
       }
