@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from '@/contexts/auth-context';
 import { Toaster } from "@/components/ui/sonner"
+import StairTransition from '@/components/StairTransition';
 import { Bowlby_One_SC, DM_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -37,8 +38,9 @@ export default function RootLayout({
           className={`${bowlby.variable} ${dmMono.variable} antialiased font-mono font-medium text-zinc-800`}
           suppressHydrationWarning
         >
+          <StairTransition />
           <AuthProvider>
-          
+
             <main className="relative">
               {children}
             </main>
