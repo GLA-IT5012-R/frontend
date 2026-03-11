@@ -24,7 +24,7 @@ export function InteractiveSnowboard() {
   return (
     <div className="absolute inset-0 flex items-center justify-center ">
       <Canvas
-        frameloop="demand"
+        // frameloop="demand"
         className="min-h-[60rem] w-full bg"
         camera={{ position: INITIAL_CAMERA_POSITION, fov: 60, near: 0.001, far: 100000 }}
       >
@@ -54,27 +54,27 @@ function Scene() {
 
   const { camera } = useThree();
 
-  useEffect(() => {
-    if (!containerRef.current || !originRef.current) return;
+  // useEffect(() => {
+  //   if (!containerRef.current || !originRef.current) return;
 
-    gsap.to(containerRef.current.position, {
-      x: 0.5,
-      rotateZ: Math.PI / 20,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
+  //   gsap.to(containerRef.current.position, {
+  //     x: 0.5,
+  //     rotateZ: Math.PI / 20,
+  //     duration: 2,
+  //     repeat: -1,
+  //     yoyo: true,
+  //     ease: "sine.inOut",
+  //   });
 
-    gsap.to(originRef.current.rotation, {
-      y: Math.PI / 30,
-      rotateZ: Math.PI / 60,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
-  }, []);
+  //   gsap.to(originRef.current.rotation, {
+  //     y: Math.PI / 30,
+  //     rotateZ: Math.PI / 60,
+  //     duration: 3,
+  //     repeat: -1,
+  //     yoyo: true,
+  //     ease: "sine.inOut",
+  //   });
+  // }, []);
 
   useEffect(() => {
     camera.lookAt(new THREE.Vector3(-0.2, 0.15, 0));
@@ -128,6 +128,8 @@ function Scene() {
 
   // 左右小摆动，模拟转弯
   function turn(board: THREE.Group) {
+    console.log('turnturn')
+
     jumpBoard(board);
 
     gsap.timeline()
@@ -141,6 +143,7 @@ function Scene() {
 
   // 小跳跃动作
   function jumpTrick(board: THREE.Group, origin: THREE.Group) {
+    console.log('jumpTrickjumpTrickjumpTrickjumpTrick')
     jumpBoard(board);
 
     gsap.timeline()
@@ -156,6 +159,8 @@ function Scene() {
 
   // 跳跃辅助函数
   function jumpBoard(board: THREE.Group) {
+    console.log('jumpBoardjumpBoardjumpBoard')
+
     setAnimating(true);
 
     gsap.timeline({ onComplete: () => setAnimating(false) })

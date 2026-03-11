@@ -50,7 +50,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
           </Heading>
         </motion.div>
       </div>
-
+      {/* description */}
       <div className="absolute inset-0 flex justify-end items-end px-6 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}      // 下方向初始偏移
@@ -86,7 +86,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
         </motion.div>
       </div>
 
-      {/* 3d-模型 */}
+      {/* 3d-model */}
       <InteractiveSnowboard />
     </Bounded>
   );
