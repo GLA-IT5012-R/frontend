@@ -65,6 +65,10 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
   // 加入购物车逻辑
   // --------------------------
   const onAddToCart = async (formData: any) => {
+    if (!user) {
+      toast.error("Please log in to add items to your cart.");
+      return;
+    }
     if (!formData) return;
 
     try {
@@ -111,6 +115,10 @@ export function ProductItem({ idx, data, noScribble }: any): React.ReactElement 
   // 下单 / 支付逻辑
   // --------------------------
   const onPay = async (formData: any) => {
+     if (!user) {
+      toast.error("Please log in to place an order.");
+      return;
+    }
     if (!formData) return;
     const userAddress = user?.address?.trim() || "";
 
