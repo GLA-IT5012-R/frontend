@@ -28,20 +28,20 @@ export default function CustomModal({
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-[90%] max-w-lg rounded-xl bg-white shadow-xl animate-scale-in">
+      <div className="relative z-10 w-[90%] max-w-lg rounded-xl animate-scale-in">
         {/* Header */}
-        <div className="flex items-start justify-between border-b px-4 py-3">
+        <div className="flex items-start justify-between py-1">
           <div className="flex-1">{/* 留空或自定义 header 内容 */}</div>
 
           {showCloseButton && onClose && (
             <button
               onClick={onClose}
-              className="rounded-md p-1 hover:bg-slate-100"
+              className="rounded-md "
             >
               {/* 小叉号 SVG */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-slate-600"
+                className="h-8 w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -58,7 +58,7 @@ export default function CustomModal({
         </div>
 
         {/* Body */}
-        <div className="p-4">{children}</div>
+        <div className="">{children}</div>
 
         {/* Footer */}
         {footerButtons && (

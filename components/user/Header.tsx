@@ -15,7 +15,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import CustomModal from "@/components/HeroModal";
-import { motion as m } from "framer-motion";
+import { motion as m, AnimatePresence } from "framer-motion";
 
 
 export function Header() {
@@ -36,7 +36,38 @@ export function Header() {
     ];
 
     /***** end clerk */
+    const menuVariants = {
+        hidden: {
+            opacity: 0,
+            y: -20
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                staggerChildren: 0.08,   // 每个子元素间隔
+                delayChildren: 0.1       // 菜单出来后再开始
+            }
+        },
+        exit: {
+            opacity: 0,
+            y: -20
+        }
+    };
 
+    const itemVariants = {
+        hidden: {
+            opacity: 0,
+            x: -20
+        },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.25
+            }
+        }
+    };
     return (
         <header id="header" className="w-full z-9 absolute top-0 left-0 flex items-center justify-between px-8 py-4">
             {/* Logo */}
@@ -56,7 +87,7 @@ export function Header() {
                         className="text-gray-700 hover:text-brand-orange transition text-lg relative flex items-center justify-center"
                     >
 
-                      {item.label} {pathname === item.href && <CurrentMark />}
+                        {item.label} {pathname === item.href && <CurrentMark />}
                     </a>
                 ))}
             </nav>
@@ -163,70 +194,78 @@ export function Header() {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="sm:hidden absolute top-full left-0 w-full bg-white shadow-md flex flex-col gap-0 p-4 z-20">
-                    {/* 用户信息 */}
-                    <SignedIn>
-                        <div className="flex flex-col gap-1 pb-2 border-b border-gray-200">
-                            <span className="text-gray-700 mb-2 font-semibold text-lg">Hi, {firstName}</span>
-                            <Link
-                                href="/account/order"
-                                className="text-gray-700 hover:text-amber-700 text-base"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                My Orders
-                            </Link>
-                            <Link
-                                href="/cart"
-                                className="flex items-center gap-2 text-gray-700 hover:text-amber-700 text-base py-2"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <ShoppingCart size={18} /> Cart
-                            </Link>
-                        </div>
-                    </SignedIn>
-                    <SignedOut>
-                        <button
-                            onClick={() => {
-                                setOpen(true);       // 打开登录 modal
-                                setIsMenuOpen(false); // 关闭 mobile menu
-                            }}
-                            className="text-lg text-brand-blue py-2 border-b border-gray-200 text-left"
-                        >
-                            Login
-                        </button>
-                    </SignedOut>
-
-                    {/* 导航菜单 */}
-                    <div className="flex flex-col gap-1 py-2 border-b border-gray-200">
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.label}
-                                href={item.href}
-                                className="text-gray-700 hover:text-amber-700 text-base py-2"
-                                onClick={() => setIsMenuOpen(false)} // 点击关闭菜单
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </div>
-
-                    {/* 购物车 & 登出 */}
-                    <SignedIn>
-                        <div className="flex flex-col gap-1 pt-2">
-
+                <AnimatePresence>
+                    <m.div
+                        variants={menuVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="sm:hidden absolute top-full left-0 w-full bg-brand-yellow shadow-md flex flex-col gap-0 p-4 z-20"
+                    >
+                        {/* 用户信息 */}
+                        <SignedIn>
+                            <div className="flex flex-col gap-1 pb-2 border-b border-gray-200">
+                                <span className="text-gray-700 mb-2 font-semibold text-lg">Hi, {firstName}</span>
+                                <Link
+                                    href="/account/order"
+                                    className="text-gray-700 hover:text-amber-700 text-base"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    My Orders
+                                </Link>
+                                <Link
+                                    href="/cart"
+                                    className="flex items-center gap-2 text-gray-700 hover:text-amber-700 text-base py-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <ShoppingCart size={18} /> Cart
+                                </Link>
+                            </div>
+                        </SignedIn>
+                        <SignedOut>
                             <button
-                                className="flex items-center gap-2 text-red-600 text-base py-2"
-                                onClick={async () => {
-                                    await signOut();
-                                    logout();
-                                    setIsMenuOpen(false); // 退出后也关闭菜单
+                                onClick={() => {
+                                    setOpen(true);       // 打开登录 modal
+                                    setIsMenuOpen(false); // 关闭 mobile menu
                                 }}
+                                className="text-lg text-blue-500 py-2 border-b border-gray-200 text-left"
                             >
-                                <LogOutIcon /> Sign Out
+                                Signin/Signup
                             </button>
+                        </SignedOut>
+
+                        {/* 导航菜单 */}
+                        <div className="flex flex-col gap-1 py-2 border-b border-gray-200">
+                            {menuItems.map((item) => (
+                                <Link
+                                    key={item.label}
+                                    href={item.href}
+                                    className="text-gray-700 hover:text-amber-700 text-base py-2"
+                                    onClick={() => setIsMenuOpen(false)} // 点击关闭菜单
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
                         </div>
-                    </SignedIn>
-                </div>
+
+                        {/* 购物车 & 登出 */}
+                        <SignedIn>
+                            <div className="flex flex-col gap-1 pt-2">
+
+                                <button
+                                    className="flex items-center gap-2 text-red-600 text-base py-2"
+                                    onClick={async () => {
+                                        await signOut();
+                                        logout();
+                                        setIsMenuOpen(false); // 退出后也关闭菜单
+                                    }}
+                                >
+                                    <LogOutIcon /> Sign Out
+                                </button>
+                            </div>
+                        </SignedIn>
+                    </m.div>
+                </AnimatePresence>
             )}
 
             {/* SignIn Modal */}
@@ -238,25 +277,25 @@ export function Header() {
 };
 
 const CurrentMark = () => {
-  return (
-    <svg
-      className="absolute -top-3 -left-2 right-0 bottom-0 w-[130%] h-[40px] pointer-events-none"
-      viewBox="0 0 108 40"
-      preserveAspectRatio="none"
-      fill="none"
-    >
-      <m.path
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{
-          delay: 2,
-          duration: 0.75,
-          ease: "easeInOut",
-        }}
-        stroke="var(--color-brand-orange)"
-        strokeWidth="3"
-        d="M68 1C55 13 3.5 12.9 1.5 24.5C-1 39 39.9808 39.5 46.5 39.5C68 39.5 98.9231 39.5 105.5 30C110.204 23.2052 104.5 16 85 15C65.5 14 50.6667 11.1667 39.5 4.5"
-      />
-    </svg>
-  );
+    return (
+        <svg
+            className="absolute -top-3 -left-2 right-0 bottom-0 w-[130%] h-[40px] pointer-events-none"
+            viewBox="0 0 108 40"
+            preserveAspectRatio="none"
+            fill="none"
+        >
+            <m.path
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                    delay: 2,
+                    duration: 0.75,
+                    ease: "easeInOut",
+                }}
+                stroke="var(--color-brand-orange)"
+                strokeWidth="3"
+                d="M68 1C55 13 3.5 12.9 1.5 24.5C-1 39 39.9808 39.5 46.5 39.5C68 39.5 98.9231 39.5 105.5 30C110.204 23.2052 104.5 16 85 15C65.5 14 50.6667 11.1667 39.5 4.5"
+            />
+        </svg>
+    );
 };
